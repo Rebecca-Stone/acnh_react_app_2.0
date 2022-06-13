@@ -154,6 +154,7 @@ nav ul li + li + li {
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* to make the cards/boxes move */
 .box {
   transform: translateX(400%);
   transition: transform 0.4s ease;
@@ -167,6 +168,7 @@ nav ul li + li + li {
   transform: translateX(0);
 }
 
+/* for search bar */
 .search {
   position: relative;
   height: 50px;

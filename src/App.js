@@ -1,9 +1,9 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Nav from "./Nav";
+import Nav from "./helpers/Nav";
 import AnimalList from "./animalComponents/AnimalList";
-import Search from "./Search";
+import Search from "./helpers/Search";
 
 function App() {
   const [ShowNav, setShowNav] = useState(false);
