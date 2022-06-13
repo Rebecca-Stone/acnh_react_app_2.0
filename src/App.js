@@ -31,7 +31,9 @@ function App() {
     <section>
       <div className={ShowNav ? "show-nav container" : "container"}>
         {/* this is where I'll put a search bar to find characters by name */}
-        <search>search</search>
+
+        {/* <search>search</search> */}
+
         {/* I'll also put some filters for: gender, species, hobby, birthday, etc. */}
         <div className="circle-container">
           <div className="circle">
