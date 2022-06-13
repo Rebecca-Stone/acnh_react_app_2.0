@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Nav from "./Nav";
 import AnimalList from "./animalComponents/AnimalList";
+import Search from "./Search";
 
 function App() {
   const [ShowNav, setShowNav] = useState(false);
@@ -40,7 +41,6 @@ function App() {
         });
     };
     getAnimals();
-    // console.log(animalList);
   }, []);
 
   const addClass = (event) => {
@@ -53,7 +53,7 @@ function App() {
         {/* this is where I'll put a search bar to find characters by name */}
 
         {/* <search>search</search> */}
-
+        <Search />
         {/* I'll also put some filters for: gender, species, hobby, birthday, etc. */}
         <div className="circle-container">
           <div className="circle">
