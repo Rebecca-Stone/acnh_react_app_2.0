@@ -7,19 +7,8 @@
 body {
   font-family: "Lato", sans-serif;
   background-color: #333;
-  color: #222;
   overflow-x: hidden;
   margin: 0;
-}
-
-.bg {
-  z-index: -1;
-  filter: blur(0px);
-}
-
-.loading-text {
-  font-size: 50px;
-  color: #fff;
 }
 
 .container {
@@ -82,12 +71,12 @@ body {
 
 .container.show-nav + nav li {
   transform: translateX(0);
-  transition-delay: 0.3s;
+  transition-delay: 0.1s;
 }
 
 nav {
-  position: fixed;
-  bottom: 40px;
+  position: sticky;
+  bottom: 60px;
   left: 0;
   z-index: 100;
 }
@@ -130,15 +119,37 @@ nav ul li + li + li {
 }
 
 .content h1 {
-  margin: 0;
+  margin: 1%;
 }
 
 .content small {
-  color: #555;
   font-style: italic;
 }
 
 .content p {
-  color: #333;
-  line-height: 1.5;
+  line-height: 1;
+}
+
+.AnimalContainer {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+/* AnimalList Component */
+.animal-details {
+  padding: 1%;
+  margin: 1%;
+  width: 30%;
+  border: 1px solid black;
+  border-radius: 2em;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* AnimalPhoto Component */
+.AnimalPhoto {
+  border-radius: 2em;
+  width: 100%;
+  margin: 1%;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
 }

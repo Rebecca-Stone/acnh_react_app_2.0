@@ -1,17 +1,33 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Nav from "./Nav";
-import Content from "./Content";
+import AnimalList from "./animalComponents/AnimalList";
 
 function App() {
   const [ShowNav, setShowNav] = useState(false);
+  const [animalList, setAnimalList] = useState([]);
+
+  useEffect(() => {
+    const getAnimals = () => {
+      axios
+        .get("https://acnhapi.com/v1a/villagers/")
+        .then((res) => {
+          setAnimalList(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    };
+    getAnimals();
+  }, []);
 
   const addClass = (event) => {
     setShowNav((current) => !current);
   };
 
   return (
-    <section class="bg">
+    <section>
       <div class={ShowNav ? "show-nav container" : "container"}>
         <div class="circle-container">
           <div class="circle">
@@ -24,7 +40,7 @@ function App() {
             </button>
           </div>
         </div>
-        <Content />
+        <AnimalList animals={animalList} />
       </div>
       <Nav />
     </section>

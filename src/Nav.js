@@ -5,7 +5,7 @@ function Nav() {
     <nav>
       <ul>
         <li>
-          <i class="fas fa-home"></i> Home
+          <i class="fas fa-home"></i>Home
         </li>
         <li>
           <i class="fas fa-user-alt"></i> About
