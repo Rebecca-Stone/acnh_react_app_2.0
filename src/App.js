@@ -20,6 +20,7 @@ function App() {
         });
     };
     getAnimals();
+    console.log(animalList);
   }, []);
 
   const addClass = (event) => {
@@ -28,15 +29,18 @@ function App() {
 
   return (
     <section>
-      <div class={ShowNav ? "show-nav container" : "container"}>
-        <div class="circle-container">
-          <div class="circle">
+      <div className={ShowNav ? "show-nav container" : "container"}>
+        {/* this is where I'll put a search bar to find characters by name */}
+        <search>search</search>
+        {/* I'll also put some filters for: gender, species, hobby, birthday, etc. */}
+        <div className="circle-container">
+          <div className="circle">
             <button id="close" onClick={addClass}>
-              <i class="fas fa-times"></i>
+              <i className="fas fa-times"></i>
             </button>
 
             <button id="open" onClick={addClass}>
-              <i class="fas fa-bars"></i>
+              <i className="fas fa-bars"></i>
             </button>
           </div>
         </div>

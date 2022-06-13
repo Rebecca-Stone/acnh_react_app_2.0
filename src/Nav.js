@@ -5,13 +5,13 @@ function Nav() {
     <nav>
       <ul>
         <li>
-          <i class="fas fa-home"></i>Home
+          <i className="fas fa-home"></i>Home
         </li>
         <li>
-          <i class="fas fa-user-alt"></i> About
+          <i className="fas fa-user-alt"></i> About
         </li>
         <li>
-          <i class="fas fa-envelope"></i> Contact
+          <i className="fas fa-envelope"></i> Contact
         </li>
       </ul>
     </nav>

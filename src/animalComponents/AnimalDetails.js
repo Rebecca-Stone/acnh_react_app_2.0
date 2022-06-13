@@ -3,7 +3,8 @@ import Content from "./AnimalContent";
 import "../App.css";
 
 export default function AnimalDetails(props) {
-  const { gender, hobby, personality, saying, image_uri } = props.animal;
+  const { gender, hobby, personality, saying, image_uri, species } =
+    props.animal;
 
   return (
     <div
@@ -22,6 +23,7 @@ export default function AnimalDetails(props) {
         catchphrase={props.animal["catch-phrase"]}
         saying={saying}
         photo={image_uri}
+        species={species}
       />
     </div>
   );

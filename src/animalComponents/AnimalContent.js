@@ -1,5 +1,6 @@
 import "../App.css";
 import { AnimalPhoto } from "./AnimalPhoto";
+import Buttons from "./Buttons";
 
 function Content(props) {
   let {
@@ -11,12 +12,15 @@ function Content(props) {
     personality,
     catchphrase,
     saying,
+    species,
   } = props;
 
   return (
-    <div class="content">
+    <div className="content">
       <h1>{name} </h1>
-      <small>{gender === "Female" ? "She/Her" : "He/Him"}</small>
+      <small>
+        {species} - {gender === "Female" ? "She/Her" : "He/Him"}
+      </small>
       <AnimalPhoto photo={photo} />
       <small>
         {personality} / {hobby}
@@ -25,6 +29,7 @@ function Content(props) {
       <h3>
         {saying} {catchphrase}
       </h3>
+      <Buttons />
     </div>
   );
 }
