@@ -1,12 +1,13 @@
 import React from "react";
 import "../App.css";
-import AnimalDetails from "./AnimalDetails";
+import AnimalContent from "./AnimalContent";
 
 export default function AnimalList(props) {
+  let { animals } = props;
   return (
     <div className="AnimalContainer">
-      {props.animals.map((animal) => (
-        <AnimalDetails key={animal.id} animal={animal} />
+      {animals.map((animal) => (
+        <AnimalContent key={animal.id} animal={animal} />
       ))}
     </div>
   );

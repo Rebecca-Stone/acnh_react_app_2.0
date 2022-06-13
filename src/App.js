@@ -8,6 +8,26 @@ function App() {
   const [ShowNav, setShowNav] = useState(false);
   const [animalList, setAnimalList] = useState([]);
 
+  const boxes = document.querySelectorAll(".box");
+
+  window.addEventListener("scroll", checkBoxes);
+
+  checkBoxes();
+
+  function checkBoxes() {
+    const triggerBottom = (window.innerHeight / 5) * 4;
+
+    boxes.forEach((box) => {
+      const boxTop = box.getBoundingClientRect().top;
+
+      if (boxTop < triggerBottom) {
+        box.classList.add("show");
+      } else {
+        box.classList.remove("show");
+      }
+    });
+  }
+
   useEffect(() => {
     const getAnimals = () => {
       axios
@@ -20,7 +40,7 @@ function App() {
         });
     };
     getAnimals();
-    console.log(animalList);
+    // console.log(animalList);
   }, []);
 
   const addClass = (event) => {

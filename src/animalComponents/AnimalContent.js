@@ -3,31 +3,27 @@ import { AnimalPhoto } from "./AnimalPhoto";
 import Buttons from "./Buttons";
 
 function Content(props) {
-  let {
-    name,
-    gender,
-    photo,
-    birthday,
-    hobby,
-    personality,
-    catchphrase,
-    saying,
-    species,
-  } = props;
+  let { gender, image_uri, hobby, personality, saying, species } = props.animal;
 
   return (
-    <div className="content">
-      <h1>{name} </h1>
+    <div
+      className="animal-details content box"
+      style={{
+        color: props.animal["text-color"],
+        backgroundColor: props.animal["bubble-color"],
+      }}
+    >
+      <h1>{props.animal.name["name-USen"]} </h1>
       <small>
         {species} - {gender === "Female" ? "She/Her" : "He/Him"}
       </small>
-      <AnimalPhoto photo={photo} />
+      <AnimalPhoto photo={image_uri} />
       <small>
         {personality} / {hobby}
       </small>
-      <p>Birthday: {birthday}</p>
+      <p>Birthday: {props.animal["birthday-string"]}</p>
       <h3>
-        {saying} {catchphrase}
+        {saying} {props.animal["catch-phrase"]}
       </h3>
       <Buttons />
     </div>
