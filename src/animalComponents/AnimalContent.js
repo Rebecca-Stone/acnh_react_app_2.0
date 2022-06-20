@@ -1,6 +1,6 @@
 import "../App.css";
 import { AnimalPhoto } from "./AnimalPhoto";
-import Buttons from "./Buttons";
+// import Buttons from "./Buttons";
 
 function Content(props) {
   let { gender, image_uri, hobby, personality, saying, species } = props.animal;
@@ -25,7 +25,7 @@ function Content(props) {
       <h3>
         {saying} {props.animal["catch-phrase"]}
       </h3>
-      <Buttons />
+      {/* <Buttons /> */}
     </div>
   );
 }
