@@ -41,7 +41,7 @@ function App() {
         });
     };
     getAnimals();
-  }, []);
+  });
 
   const addClass = (event) => {
     setShowNav((current) => !current);
