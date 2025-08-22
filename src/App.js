@@ -16,12 +16,17 @@ import SchemaValidator from "./components/SchemaValidator";
 import { CollectionProvider } from "./contexts/CollectionContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
-import { normalizeVillagerData, getCompatibleVillagerData } from "./utils/dataAdapter";
+import {
+  normalizeVillagerData,
+  getCompatibleVillagerData,
+} from "./utils/dataAdapter";
 import sampleVillagersNewFormat from "./data/sampleVillagers";
 
 // Convert new format sample data to compatible format for existing components
 const getCompatibleSampleData = () => {
-  return sampleVillagersNewFormat.map(villager => getCompatibleVillagerData(villager));
+  return sampleVillagersNewFormat.map((villager) =>
+    getCompatibleVillagerData(villager)
+  );
 };
 
 function App() {
@@ -108,13 +113,15 @@ function App() {
         try {
           // Try the original ACNH API first
           console.log("Attempting to load from ACNH API...");
-          const response = await axios.get("https://acnhapi.com/v1a/villagers/");
+          const response = await axios.get(
+            "https://acnhapi.com/v1a/villagers/"
+          );
           rawData = response.data;
           sourceFormat = "old";
           console.log("Successfully loaded from ACNH API (old format)");
         } catch (apiErr) {
           console.log("ACNH API unavailable, trying alternative sources...");
-          
+
           // Try loading from a new format API (placeholder for future)
           try {
             // Future: const newFormatResponse = await axios.get("https://api.newformat.com/villagers");
@@ -125,37 +132,46 @@ function App() {
             console.log("No external APIs available, using sample data");
             rawData = sampleVillagersNewFormat;
             sourceFormat = "new";
-            setError("Using enhanced sample data (APIs temporarily unavailable)");
+            setError(
+              "Using enhanced sample data (APIs temporarily unavailable)"
+            );
           }
         }
 
         // Normalize data regardless of source format
         let normalizedData = [];
-        
+
         if (sourceFormat === "old") {
           // Convert old API data to compatible format
-          normalizedData = Object.values(rawData).map(villager => getCompatibleVillagerData(
-            normalizeVillagerData([villager])[0]
-          ));
+          normalizedData = Object.values(rawData).map((villager) =>
+            getCompatibleVillagerData(normalizeVillagerData([villager])[0])
+          );
           setDataFormat("old");
         } else if (sourceFormat === "new") {
           // Convert new format data to compatible format for existing components
-          normalizedData = rawData.map(villager => getCompatibleVillagerData(villager));
+          normalizedData = rawData.map((villager) =>
+            getCompatibleVillagerData(villager)
+          );
           setDataFormat("new");
         }
 
         // Filter out any invalid entries
-        const validData = normalizedData.filter(villager => 
-          villager && villager.name && typeof villager.name === "object" && villager.name["name-USen"]
+        const validData = normalizedData.filter(
+          (villager) =>
+            villager &&
+            villager.name &&
+            typeof villager.name === "object" &&
+            villager.name["name-USen"]
         );
 
-        console.log(`Loaded ${validData.length} villagers in ${sourceFormat} format`);
+        console.log(
+          `Loaded ${validData.length} villagers in ${sourceFormat} format`
+        );
         setAnimalList(validData);
         setFilteredAnimals(validData);
-
       } catch (err) {
         console.error("All data loading methods failed:", err);
-        
+
         // Last resort: use compatible sample data
         const fallbackData = getCompatibleSampleData();
         setAnimalList(fallbackData);
@@ -221,37 +237,37 @@ function App() {
             Skip to main content
           </a>
 
-                        <ThemeToggle />
-              
-              {/* Modal Type Toggle */}
-              <div className="modal-toggle-section">
-                <label className="modal-toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={useEnhancedModal}
-                    onChange={(e) => setUseEnhancedModal(e.target.checked)}
-                    className="modal-toggle-checkbox"
-                  />
-                  <span className="modal-toggle-text">
-                    {useEnhancedModal ? "🎨 Enhanced" : "📝 Basic"} Modal
-                  </span>
-                </label>
-              </div>
+          <ThemeToggle />
 
-              {/* Schema Validator Toggle */}
-              <div className="modal-toggle-section">
-                <label className="modal-toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={showValidator}
-                    onChange={(e) => setShowValidator(e.target.checked)}
-                    className="modal-toggle-checkbox"
-                  />
-                  <span className="modal-toggle-text">
-                    {showValidator ? "🔍 Hide" : "🔍 Show"} Schema Validator
-                  </span>
-                </label>
-              </div>
+          {/* Modal Type Toggle */}
+          <div className="modal-toggle-section">
+            <label className="modal-toggle-label">
+              <input
+                type="checkbox"
+                checked={useEnhancedModal}
+                onChange={(e) => setUseEnhancedModal(e.target.checked)}
+                className="modal-toggle-checkbox"
+              />
+              <span className="modal-toggle-text">
+                {useEnhancedModal ? "🎨 Enhanced" : "📝 Basic"} Modal
+              </span>
+            </label>
+          </div>
+
+          {/* Schema Validator Toggle */}
+          <div className="modal-toggle-section">
+            <label className="modal-toggle-label">
+              <input
+                type="checkbox"
+                checked={showValidator}
+                onChange={(e) => setShowValidator(e.target.checked)}
+                className="modal-toggle-checkbox"
+              />
+              <span className="modal-toggle-text">
+                {showValidator ? "🔍 Hide" : "🔍 Show"} Schema Validator
+              </span>
+            </label>
+          </div>
 
           <div
             className={showNav ? "show-nav container" : "container"}
@@ -296,7 +312,7 @@ function App() {
 
             {/* Schema Validator */}
             {showValidator && (
-              <SchemaValidator 
+              <SchemaValidator
                 onValidatedData={(validatedData) => {
                   console.log("Validated data received:", validatedData);
                   // Could implement functionality to load validated data into the app
@@ -306,7 +322,8 @@ function App() {
 
             {/* Debug info for data format */}
             <div className="sr-only" aria-live="polite">
-              Data loaded in {dataFormat} format with {useEnhancedModal ? "enhanced" : "basic"} modal
+              Data loaded in {dataFormat} format with{" "}
+              {useEnhancedModal ? "enhanced" : "basic"} modal
             </div>
 
             <nav className="circle-container" aria-label="Navigation controls">
