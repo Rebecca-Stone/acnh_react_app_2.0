@@ -4,11 +4,13 @@ import "./styles/ModalToggle.css";
 import "./styles/SchemaValidator.css";
 import "./styles/HamburgerMenu.css";
 import "./styles/EnhancedBackground.css";
+import "./styles/EnhancedSearch.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 import AnimalList from "./animalComponents/AnimalList";
 import Search from "./helpers/Search";
+import EnhancedSearch from "./components/EnhancedSearch";
 import Filter from "./helpers/Filter";
 import VillagerModal from "./components/VillagerModal";
 import EnhancedVillagerModal from "./components/EnhancedVillagerModal";
@@ -43,6 +45,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [useEnhancedModal, setUseEnhancedModal] = useState(true); // Toggle between modal types
   const [showValidator, setShowValidator] = useState(false); // Toggle schema validator
+  const [useEnhancedSearch, setUseEnhancedSearch] = useState(true); // Toggle between search types
   const [dataFormat, setDataFormat] = useState("mixed"); // Track data format: 'old', 'new', or 'mixed'
 
   // Enable keyboard navigation
@@ -272,6 +275,21 @@ function App() {
                   </span>
                 </label>
               </div>
+
+              {/* Search Type Toggle */}
+              <div className="modal-toggle-section">
+                <label className="modal-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={useEnhancedSearch}
+                    onChange={(e) => setUseEnhancedSearch(e.target.checked)}
+                    className="modal-toggle-checkbox"
+                  />
+                  <span className="modal-toggle-text">
+                    {useEnhancedSearch ? "✨ Enhanced" : "📝 Basic"} Search
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
 
@@ -347,7 +365,14 @@ function App() {
               </h1>
             </header>
 
-            <Search onSearchChange={setSearchTerm} />
+            {useEnhancedSearch ? (
+              <EnhancedSearch 
+                onSearchChange={setSearchTerm}
+                animalList={animalList}
+              />
+            ) : (
+              <Search onSearchChange={setSearchTerm} />
+            )}
 
             <Filter
               animalList={animalList}
