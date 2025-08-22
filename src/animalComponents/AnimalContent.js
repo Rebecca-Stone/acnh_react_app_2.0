@@ -5,13 +5,25 @@ import Buttons from "./Buttons";
 function Content(props) {
   let { gender, image_uri, hobby, personality, saying, species } = props.animal;
 
+  const handleCardClick = (e) => {
+    // Don't trigger modal if clicking on buttons
+    if (e.target.closest(".villager-buttons")) {
+      return;
+    }
+    if (props.onVillagerClick) {
+      props.onVillagerClick(props.animal);
+    }
+  };
+
   return (
     <div
-      className="animal-details content box"
+      className="animal-details content box clickable-card"
       style={{
         color: props.animal["text-color"],
         backgroundColor: props.animal["bubble-color"],
       }}
+      onClick={handleCardClick}
+      title="Click to view details"
     >
       <h1>{props.animal.name["name-USen"]} </h1>
       <small>

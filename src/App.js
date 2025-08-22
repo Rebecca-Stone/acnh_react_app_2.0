@@ -5,7 +5,11 @@ import Nav from "./helpers/Nav";
 import AnimalList from "./animalComponents/AnimalList";
 import Search from "./helpers/Search";
 import Filter from "./helpers/Filter";
+import VillagerModal from "./components/VillagerModal";
+import CollectionStats from "./components/CollectionStats";
+import ThemeToggle from "./components/ThemeToggle";
 import { CollectionProvider } from "./contexts/CollectionContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Mock data as fallback when API is down
 const mockVillagers = [
@@ -60,6 +64,8 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedVillager, setSelectedVillager] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Proper scroll handling with React
   useEffect(() => {
@@ -153,6 +159,16 @@ function App() {
     setShowNav((current) => !current);
   };
 
+  const openVillagerModal = (villager) => {
+    setSelectedVillager(villager);
+    setIsModalOpen(true);
+  };
+
+  const closeVillagerModal = () => {
+    setIsModalOpen(false);
+    setSelectedVillager(null);
+  };
+
   if (loading) {
     return (
       <section>
@@ -182,48 +198,65 @@ function App() {
   }
 
   return (
-    <CollectionProvider>
-      <section>
-        <div className={showNav ? "show-nav container" : "container"}>
-          {error && animalList.length > 0 && (
-            <div
-              style={{
-                background: "#fff3cd",
-                color: "#856404",
-                padding: "10px",
-                borderRadius: "5px",
-                marginBottom: "20px",
-                border: "1px solid #ffeaa7",
-              }}
-            >
-              ℹ️ {error}
+    <ThemeProvider>
+      <CollectionProvider>
+        <ThemeToggle />
+        <section>
+          <div className={showNav ? "show-nav container" : "container"}>
+            {error && animalList.length > 0 && (
+              <div
+                style={{
+                  background: "#fff3cd",
+                  color: "#856404",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  marginBottom: "20px",
+                  border: "1px solid #ffeaa7",
+                }}
+              >
+                ℹ️ {error}
+              </div>
+            )}
+
+            <Search onSearchChange={setSearchTerm} />
+
+            <Filter
+              animalList={animalList}
+              onFilter={setFilteredAnimals}
+              searchTerm={searchTerm}
+            />
+
+            <CollectionStats
+              totalVillagers={animalList.length}
+              animalList={animalList}
+            />
+
+            <div className="circle-container">
+              <div className="circle">
+                <button id="close" onClick={toggleNav}>
+                  <i className="fas fa-times"></i>
+                </button>
+
+                <button id="open" onClick={toggleNav}>
+                  <i className="fas fa-bars"></i>
+                </button>
+              </div>
             </div>
-          )}
-
-          <Search onSearchChange={setSearchTerm} />
-
-          <Filter
-            animalList={animalList}
-            onFilter={setFilteredAnimals}
-            searchTerm={searchTerm}
-          />
-
-          <div className="circle-container">
-            <div className="circle">
-              <button id="close" onClick={toggleNav}>
-                <i className="fas fa-times"></i>
-              </button>
-
-              <button id="open" onClick={toggleNav}>
-                <i className="fas fa-bars"></i>
-              </button>
-            </div>
+            <AnimalList
+              animals={filteredAnimals}
+              onVillagerClick={openVillagerModal}
+            />
           </div>
-          <AnimalList animals={filteredAnimals} />
-        </div>
-        <Nav />
-      </section>
-    </CollectionProvider>
+          <Nav />
+
+          <VillagerModal
+            villager={selectedVillager}
+            isOpen={isModalOpen}
+            onClose={closeVillagerModal}
+          />
+        </section>
+      </CollectionProvider>
+    </ThemeProvider>
   );
 }
 
