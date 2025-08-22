@@ -549,25 +549,29 @@ nav ul li + li + li {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   padding: 20px;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(6px);
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-color, #ffffff);
+  border: 2px solid var(--border-color, #e0e0e0);
   border-radius: 20px;
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   animation: modalSlideIn 0.3s ease-out;
+  opacity: 1;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 @keyframes modalSlideIn {
@@ -1190,17 +1194,23 @@ nav ul li + li + li {
 
 /* Modal Theme Support */
 .modal-backdrop {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
 }
 
 [data-theme="dark"] .modal-backdrop {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
 }
 
 .modal-content {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  box-shadow: 0 20px 60px var(--shadow-hover);
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #333333);
+  box-shadow: 0 20px 60px var(--shadow-hover, rgba(0, 0, 0, 0.4));
+  border: 2px solid var(--border-color, #e0e0e0);
+  opacity: 1;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .modal-close {

@@ -1,20 +1,35 @@
 /* Enhanced Modal Styles for New Schema Features */
 
 .enhanced-modal-backdrop {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(5px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   z-index: 1001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
 }
 
 .enhanced-modal-content {
+  width: 100%;
   max-width: 800px;
   max-height: 90vh;
   overflow-y: auto;
-  background: var(--bg-color);
+  background: var(--bg-color, #ffffff);
+  border: 2px solid var(--border-color, #e0e0e0);
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
+  position: relative;
+  /* Ensure solid background */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .enhanced-modal-header {
@@ -50,6 +65,9 @@
   grid-template-columns: 1fr 2fr;
   gap: 2rem;
   flex-grow: 1;
+  background: var(--bg-color, #ffffff);
+  position: relative;
+  z-index: 1;
 }
 
 .enhanced-villager-image-section {
@@ -78,10 +96,12 @@
 }
 
 .enhanced-basic-info {
-  background: var(--card-bg);
+  background: var(--card-bg, #f8f9fa);
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e0e0e0);
+  opacity: 1;
+  backdrop-filter: none;
 }
 
 .info-row {
@@ -127,10 +147,12 @@
 
 /* Gift Preferences Styling */
 .enhanced-gift-section {
-  background: var(--card-bg);
+  background: var(--card-bg, #f8f9fa);
   padding: 1.25rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e0e0e0);
+  opacity: 1;
+  backdrop-filter: none;
 }
 
 .gift-category {
@@ -185,10 +207,12 @@
 
 /* Game Appearances */
 .enhanced-appearances-section {
-  background: var(--card-bg);
+  background: var(--card-bg, #f8f9fa);
   padding: 1.25rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e0e0e0);
+  opacity: 1;
+  backdrop-filter: none;
 }
 
 .appearances-list {
@@ -214,10 +238,12 @@
 
 /* Music Section */
 .enhanced-music-section {
-  background: var(--card-bg);
+  background: var(--card-bg, #f8f9fa);
   padding: 1.25rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e0e0e0);
+  opacity: 1;
+  backdrop-filter: none;
 }
 
 .house-song {
@@ -260,9 +286,11 @@
 /* Modal Footer */
 .enhanced-modal-footer {
   padding: 1.5rem;
-  border-top: 1px solid var(--border-color);
-  background: var(--card-bg);
+  border-top: 1px solid var(--border-color, #e0e0e0);
+  background: var(--card-bg, #f8f9fa);
   border-radius: 0 0 16px 16px;
+  opacity: 1;
+  backdrop-filter: none;
 }
 
 .enhanced-collection-actions {
