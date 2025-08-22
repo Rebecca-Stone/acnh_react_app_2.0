@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ACNH Villager Dataset",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "name",
+      "species",
+      "gender",
+      "personality",
+      "birthday",
+      "catchphrase"
+    ],
+    "properties": {
+      "poster_image_url": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Direct URL to the villager's poster image (dodo.ac)."
+      },
+      "name": {
+        "type": "string"
+      },
+      "species": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "gender": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "enum": [
+          "Male",
+          "Female",
+          null
+        ]
+      },
+      "personality": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "enum": [
+          "Jock",
+          "Cranky",
+          "Peppy",
+          "Snooty",
+          "Normal",
+          "Lazy",
+          "Smug",
+          "Big sister",
+          null
+        ]
+      },
+      "hobby": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "New Horizons hobby (fixed per villager)."
+      },
+      "birthday": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Month Day (e.g., 'March 10')"
+      },
+      "catchphrase": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "house_song": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "K.K. song that plays in the villager's NH home."
+      },
+      "appearances": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "List of games where the villager appears (best-effort)."
+      },
+      "page_url": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Nookipedia page for the villager."
+      },
+      "favorite_gifts": {
+        "type": "object",
+        "properties": {
+          "favorite_styles": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "favorite_colors": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "ideal_clothing_examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "additionalProperties": false
+  }
+}

@@ -1,4 +1,7 @@
 import "./App.css";
+import "./styles/EnhancedModal.css";
+import "./styles/ModalToggle.css";
+import "./styles/SchemaValidator.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Nav from "./helpers/Nav";
@@ -6,57 +9,20 @@ import AnimalList from "./animalComponents/AnimalList";
 import Search from "./helpers/Search";
 import Filter from "./helpers/Filter";
 import VillagerModal from "./components/VillagerModal";
+import EnhancedVillagerModal from "./components/EnhancedVillagerModal";
 import CollectionStats from "./components/CollectionStats";
 import ThemeToggle from "./components/ThemeToggle";
+import SchemaValidator from "./components/SchemaValidator";
 import { CollectionProvider } from "./contexts/CollectionContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
+import { normalizeVillagerData, getCompatibleVillagerData } from "./utils/dataAdapter";
+import sampleVillagersNewFormat from "./data/sampleVillagers";
 
-// Mock data as fallback when API is down
-const mockVillagers = [
-  {
-    id: 1,
-    name: { "name-USen": "Raymond" },
-    species: "Cat",
-    personality: "Smug",
-    gender: "Male",
-    "birthday-string": "October 1st",
-    saying: "Hmm, indeed",
-    "catch-phrase": "crisp",
-    hobby: "Reading",
-    image_uri: "https://acnhapi.com/v1/images/villagers/400",
-    "text-color": "#ffffff",
-    "bubble-color": "#4a4a4a",
-  },
-  {
-    id: 2,
-    name: { "name-USen": "Isabelle" },
-    species: "Dog",
-    personality: "Normal",
-    gender: "Female",
-    "birthday-string": "December 20th",
-    saying: "What can I do for you?",
-    "catch-phrase": "yes yes!",
-    hobby: "Organization",
-    image_uri: "https://acnhapi.com/v1/images/villagers/406",
-    "text-color": "#ffffff",
-    "bubble-color": "#f4d03f",
-  },
-  {
-    id: 3,
-    name: { "name-USen": "Tom Nook" },
-    species: "Raccoon Dog",
-    personality: "Cranky",
-    gender: "Male",
-    "birthday-string": "May 30th",
-    saying: "The customer is always right",
-    "catch-phrase": "yes yes",
-    hobby: "Business",
-    image_uri: "https://acnhapi.com/v1/images/villagers/401",
-    "text-color": "#ffffff",
-    "bubble-color": "#8b4513",
-  },
-];
+// Convert new format sample data to compatible format for existing components
+const getCompatibleSampleData = () => {
+  return sampleVillagersNewFormat.map(villager => getCompatibleVillagerData(villager));
+};
 
 function App() {
   const [showNav, setShowNav] = useState(false);
@@ -67,6 +33,9 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedVillager, setSelectedVillager] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [useEnhancedModal, setUseEnhancedModal] = useState(true); // Toggle between modal types
+  const [showValidator, setShowValidator] = useState(false); // Toggle schema validator
+  const [dataFormat, setDataFormat] = useState("mixed"); // Track data format: 'old', 'new', or 'mixed'
 
   // Enable keyboard navigation
   useKeyboardNavigation(true);
@@ -132,30 +101,72 @@ function App() {
         setLoading(true);
         setError(null);
 
-        // Try the original API first
-        const response = await axios.get("https://acnhapi.com/v1a/villagers/");
-        setAnimalList(response.data);
-        setFilteredAnimals(response.data);
-      } catch (err) {
-        console.error("Primary API failed, using fallback data:", err);
+        // Try to load data from multiple sources
+        let rawData = null;
+        let sourceFormat = "unknown";
 
-        // Try alternative API sources
         try {
-          // Note: We'll try mock data for now since the API is down
-          console.log("Using mock data as fallback");
-          setAnimalList(mockVillagers);
-          setFilteredAnimals(mockVillagers);
-          setError("Using sample data (API temporarily unavailable)");
-        } catch (fallbackErr) {
-          setError(
-            "Failed to load animal data. Please check your internet connection."
-          );
-          console.error("All data sources failed:", fallbackErr);
+          // Try the original ACNH API first
+          console.log("Attempting to load from ACNH API...");
+          const response = await axios.get("https://acnhapi.com/v1a/villagers/");
+          rawData = response.data;
+          sourceFormat = "old";
+          console.log("Successfully loaded from ACNH API (old format)");
+        } catch (apiErr) {
+          console.log("ACNH API unavailable, trying alternative sources...");
+          
+          // Try loading from a new format API (placeholder for future)
+          try {
+            // Future: const newFormatResponse = await axios.get("https://api.newformat.com/villagers");
+            // rawData = newFormatResponse.data;
+            // sourceFormat = "new";
+            throw new Error("New format API not yet available");
+          } catch (newApiErr) {
+            console.log("No external APIs available, using sample data");
+            rawData = sampleVillagersNewFormat;
+            sourceFormat = "new";
+            setError("Using enhanced sample data (APIs temporarily unavailable)");
+          }
         }
+
+        // Normalize data regardless of source format
+        let normalizedData = [];
+        
+        if (sourceFormat === "old") {
+          // Convert old API data to compatible format
+          normalizedData = Object.values(rawData).map(villager => getCompatibleVillagerData(
+            normalizeVillagerData([villager])[0]
+          ));
+          setDataFormat("old");
+        } else if (sourceFormat === "new") {
+          // Convert new format data to compatible format for existing components
+          normalizedData = rawData.map(villager => getCompatibleVillagerData(villager));
+          setDataFormat("new");
+        }
+
+        // Filter out any invalid entries
+        const validData = normalizedData.filter(villager => 
+          villager && villager.name && typeof villager.name === "object" && villager.name["name-USen"]
+        );
+
+        console.log(`Loaded ${validData.length} villagers in ${sourceFormat} format`);
+        setAnimalList(validData);
+        setFilteredAnimals(validData);
+
+      } catch (err) {
+        console.error("All data loading methods failed:", err);
+        
+        // Last resort: use compatible sample data
+        const fallbackData = getCompatibleSampleData();
+        setAnimalList(fallbackData);
+        setFilteredAnimals(fallbackData);
+        setDataFormat("fallback");
+        setError("Using offline sample data (connection issues detected)");
       } finally {
         setLoading(false);
       }
     };
+
     getAnimals();
   }, []); // Empty dependency array - runs only once on mount
 
@@ -210,7 +221,37 @@ function App() {
             Skip to main content
           </a>
 
-          <ThemeToggle />
+                        <ThemeToggle />
+              
+              {/* Modal Type Toggle */}
+              <div className="modal-toggle-section">
+                <label className="modal-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={useEnhancedModal}
+                    onChange={(e) => setUseEnhancedModal(e.target.checked)}
+                    className="modal-toggle-checkbox"
+                  />
+                  <span className="modal-toggle-text">
+                    {useEnhancedModal ? "🎨 Enhanced" : "📝 Basic"} Modal
+                  </span>
+                </label>
+              </div>
+
+              {/* Schema Validator Toggle */}
+              <div className="modal-toggle-section">
+                <label className="modal-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={showValidator}
+                    onChange={(e) => setShowValidator(e.target.checked)}
+                    className="modal-toggle-checkbox"
+                  />
+                  <span className="modal-toggle-text">
+                    {showValidator ? "🔍 Hide" : "🔍 Show"} Schema Validator
+                  </span>
+                </label>
+              </div>
 
           <div
             className={showNav ? "show-nav container" : "container"}
@@ -253,6 +294,21 @@ function App() {
               animalList={animalList}
             />
 
+            {/* Schema Validator */}
+            {showValidator && (
+              <SchemaValidator 
+                onValidatedData={(validatedData) => {
+                  console.log("Validated data received:", validatedData);
+                  // Could implement functionality to load validated data into the app
+                }}
+              />
+            )}
+
+            {/* Debug info for data format */}
+            <div className="sr-only" aria-live="polite">
+              Data loaded in {dataFormat} format with {useEnhancedModal ? "enhanced" : "basic"} modal
+            </div>
+
             <nav className="circle-container" aria-label="Navigation controls">
               <div className="circle">
                 <button
@@ -289,11 +345,20 @@ function App() {
           </div>
           <Nav />
 
-          <VillagerModal
-            villager={selectedVillager}
-            isOpen={isModalOpen}
-            onClose={closeVillagerModal}
-          />
+          {/* Villager Detail Modal */}
+          {useEnhancedModal ? (
+            <EnhancedVillagerModal
+              villager={selectedVillager}
+              isOpen={isModalOpen}
+              onClose={closeVillagerModal}
+            />
+          ) : (
+            <VillagerModal
+              villager={selectedVillager}
+              isOpen={isModalOpen}
+              onClose={closeVillagerModal}
+            />
+          )}
         </div>
       </CollectionProvider>
     </ThemeProvider>

@@ -1,0 +1,359 @@
+/* Enhanced Modal Styles for New Schema Features */
+
+.enhanced-modal-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 1001;
+}
+
+.enhanced-modal-content {
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-color);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.enhanced-modal-header {
+  position: relative;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.enhanced-villager-title {
+  text-align: center;
+}
+
+.enhanced-villager-name {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.enhanced-villager-subtitle {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.enhanced-modal-body {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  flex-grow: 1;
+}
+
+.enhanced-villager-image-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.enhanced-villager-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.enhanced-villager-image:hover {
+  transform: scale(1.05);
+}
+
+.enhanced-villager-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.enhanced-basic-info {
+  background: var(--card-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.info-value {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.enhanced-personality-section h3,
+.enhanced-gift-section h3,
+.enhanced-appearances-section h3,
+.enhanced-music-section h3 {
+  font-size: 1.2rem;
+  margin: 0 0 0.75rem 0;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.personality-description {
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Gift Preferences Styling */
+.enhanced-gift-section {
+  background: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.gift-category {
+  margin-bottom: 1rem;
+}
+
+.gift-category:last-child {
+  margin-bottom: 0;
+}
+
+.gift-category h4 {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gift-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.gift-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.style-tag {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.color-tag {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: white;
+}
+
+.clothing-tag {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+}
+
+.gift-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Game Appearances */
+.enhanced-appearances-section {
+  background: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.appearances-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.appearance-badge {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: var(--text-color);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.appearance-badge:hover {
+  transform: translateY(-1px);
+}
+
+/* Music Section */
+.enhanced-music-section {
+  background: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.house-song {
+  margin: 0;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.house-song strong {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* External Links */
+.enhanced-links-section {
+  text-align: center;
+}
+
+.nookipedia-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+  color: var(--text-color);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nookipedia-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+/* Modal Footer */
+.enhanced-modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--card-bg);
+  border-radius: 0 0 16px 16px;
+}
+
+.enhanced-collection-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.collection-button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.have-button {
+  background: var(--success-color);
+  color: white;
+}
+
+.have-button.active {
+  background: var(--success-dark);
+  transform: scale(0.95);
+}
+
+.want-button {
+  background: var(--warning-color);
+  color: white;
+}
+
+.want-button.active {
+  background: var(--warning-dark);
+  transform: scale(0.95);
+}
+
+.collection-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.collection-button:focus {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .enhanced-modal-content {
+    max-width: 95vw;
+    margin: 1rem;
+  }
+
+  .enhanced-modal-body {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .enhanced-villager-name {
+    font-size: 1.5rem;
+  }
+
+  .enhanced-collection-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .collection-button {
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-modal-body {
+    padding: 1rem;
+  }
+
+  .enhanced-modal-header {
+    padding: 1rem;
+  }
+
+  .enhanced-modal-footer {
+    padding: 1rem;
+  }
+
+  .gift-tags,
+  .appearances-list {
+    justify-content: center;
+  }
+}

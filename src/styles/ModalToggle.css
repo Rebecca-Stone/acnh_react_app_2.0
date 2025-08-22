@@ -1,0 +1,64 @@
+/* Modal Toggle Section */
+.modal-toggle-section {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.modal-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.modal-toggle-label:hover {
+  background: var(--hover-bg);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-toggle-checkbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-toggle-checkbox:checked {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.modal-toggle-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.modal-toggle-text {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* Enhanced modal specific variables */
+:root {
+  --success-color: #28a745;
+  --success-dark: #1e7e34;
+  --warning-color: #ffc107;
+  --warning-dark: #e0a800;
+  --focus-color: #007bff;
+}
