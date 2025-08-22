@@ -3,6 +3,7 @@ import "./styles/EnhancedModal.css";
 import "./styles/ModalToggle.css";
 import "./styles/SchemaValidator.css";
 import "./styles/HamburgerMenu.css";
+import "./styles/EnhancedBackground.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -239,37 +240,43 @@ function App() {
             Skip to main content
           </a>
 
+          {/* Enhanced App Header Section */}
+          <div className="app-header-section">
+            <div className="header-controls">
+              {/* Modal Type Toggle */}
+              <div className="modal-toggle-section">
+                <label className="modal-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={useEnhancedModal}
+                    onChange={(e) => setUseEnhancedModal(e.target.checked)}
+                    className="modal-toggle-checkbox"
+                  />
+                  <span className="modal-toggle-text">
+                    {useEnhancedModal ? "🎨 Enhanced" : "📝 Basic"} Modal
+                  </span>
+                </label>
+              </div>
+
+              {/* Schema Validator Toggle */}
+              <div className="modal-toggle-section">
+                <label className="modal-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={showValidator}
+                    onChange={(e) => setShowValidator(e.target.checked)}
+                    className="modal-toggle-checkbox"
+                  />
+                  <span className="modal-toggle-text">
+                    {showValidator ? "🔍 Hide" : "🔍 Show"} Schema Validator
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Theme Toggle - Fixed Position */}
           <ThemeToggle />
-
-          {/* Modal Type Toggle */}
-          <div className="modal-toggle-section">
-            <label className="modal-toggle-label">
-              <input
-                type="checkbox"
-                checked={useEnhancedModal}
-                onChange={(e) => setUseEnhancedModal(e.target.checked)}
-                className="modal-toggle-checkbox"
-              />
-              <span className="modal-toggle-text">
-                {useEnhancedModal ? "🎨 Enhanced" : "📝 Basic"} Modal
-              </span>
-            </label>
-          </div>
-
-          {/* Schema Validator Toggle */}
-          <div className="modal-toggle-section">
-            <label className="modal-toggle-label">
-              <input
-                type="checkbox"
-                checked={showValidator}
-                onChange={(e) => setShowValidator(e.target.checked)}
-                className="modal-toggle-checkbox"
-              />
-              <span className="modal-toggle-text">
-                {showValidator ? "🔍 Hide" : "🔍 Show"} Schema Validator
-              </span>
-            </label>
-          </div>
 
           {/* Enhanced Hamburger Menu */}
           <HamburgerMenu isOpen={showNav} onToggle={toggleNav} />
