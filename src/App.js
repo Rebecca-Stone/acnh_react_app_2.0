@@ -4,6 +4,8 @@ import axios from "axios";
 import Nav from "./helpers/Nav";
 import AnimalList from "./animalComponents/AnimalList";
 import Search from "./helpers/Search";
+import Filter from "./helpers/Filter";
+import { CollectionProvider } from "./contexts/CollectionContext";
 
 // Mock data as fallback when API is down
 const mockVillagers = [
@@ -55,6 +57,7 @@ function App() {
   const [showNav, setShowNav] = useState(false);
   const [animalList, setAnimalList] = useState([]);
   const [filteredAnimals, setFilteredAnimals] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -179,40 +182,48 @@ function App() {
   }
 
   return (
-    <section>
-      <div className={showNav ? "show-nav container" : "container"}>
-        {error && animalList.length > 0 && (
-          <div
-            style={{
-              background: "#fff3cd",
-              color: "#856404",
-              padding: "10px",
-              borderRadius: "5px",
-              marginBottom: "20px",
-              border: "1px solid #ffeaa7",
-            }}
-          >
-            ℹ️ {error}
+    <CollectionProvider>
+      <section>
+        <div className={showNav ? "show-nav container" : "container"}>
+          {error && animalList.length > 0 && (
+            <div
+              style={{
+                background: "#fff3cd",
+                color: "#856404",
+                padding: "10px",
+                borderRadius: "5px",
+                marginBottom: "20px",
+                border: "1px solid #ffeaa7",
+              }}
+            >
+              ℹ️ {error}
+            </div>
+          )}
+
+          <Search onSearchChange={setSearchTerm} />
+
+          <Filter
+            animalList={animalList}
+            onFilter={setFilteredAnimals}
+            searchTerm={searchTerm}
+          />
+
+          <div className="circle-container">
+            <div className="circle">
+              <button id="close" onClick={toggleNav}>
+                <i className="fas fa-times"></i>
+              </button>
+
+              <button id="open" onClick={toggleNav}>
+                <i className="fas fa-bars"></i>
+              </button>
+            </div>
           </div>
-        )}
-
-        <Search animalList={animalList} onFilter={setFilteredAnimals} />
-
-        <div className="circle-container">
-          <div className="circle">
-            <button id="close" onClick={toggleNav}>
-              <i className="fas fa-times"></i>
-            </button>
-
-            <button id="open" onClick={toggleNav}>
-              <i className="fas fa-bars"></i>
-            </button>
-          </div>
+          <AnimalList animals={filteredAnimals} />
         </div>
-        <AnimalList animals={filteredAnimals} />
-      </div>
-      <Nav />
-    </section>
+        <Nav />
+      </section>
+    </CollectionProvider>
   );
 }
 

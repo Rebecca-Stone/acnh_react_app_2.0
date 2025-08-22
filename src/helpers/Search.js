@@ -1,23 +1,14 @@
 import React from "react";
 import { useState } from "react";
 
-export default function Search({ animalList, onFilter }) {
+export default function Search({ onSearchChange }) {
   const [isActive, setIsActive] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (event) => {
-    const term = event.target.value.toLowerCase();
+    const term = event.target.value;
     setSearchTerm(term);
-
-    if (onFilter && animalList) {
-      const filtered = animalList.filter(
-        (animal) =>
-          animal.name["name-USen"].toLowerCase().includes(term) ||
-          animal.species.toLowerCase().includes(term) ||
-          animal.personality.toLowerCase().includes(term)
-      );
-      onFilter(filtered);
-    }
+    onSearchChange(term); // Pass search term to parent
   };
 
   const toggleSearch = () => {
@@ -25,9 +16,7 @@ export default function Search({ animalList, onFilter }) {
     if (isActive && searchTerm) {
       // Clear search when closing
       setSearchTerm("");
-      if (onFilter) {
-        onFilter(animalList); // Reset to all animals
-      }
+      onSearchChange(""); // Clear search in parent
     }
   };
 

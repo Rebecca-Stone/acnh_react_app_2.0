@@ -25,7 +25,7 @@ function Content(props) {
       <h3>
         {saying} {props.animal["catch-phrase"]}
       </h3>
-      <Buttons />
+      <Buttons villagerId={props.animal.id} />
     </div>
   );
 }
