@@ -6,67 +6,107 @@ import AnimalList from "./animalComponents/AnimalList";
 import Search from "./helpers/Search";
 
 function App() {
-  const [ShowNav, setShowNav] = useState(false);
+  const [showNav, setShowNav] = useState(false);
   const [animalList, setAnimalList] = useState([]);
+  const [filteredAnimals, setFilteredAnimals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const boxes = document.querySelectorAll(".box");
+  // Proper scroll handling with React
+  useEffect(() => {
+    const checkBoxes = () => {
+      const triggerBottom = (window.innerHeight / 5) * 4;
+      const boxes = document.querySelectorAll(".box");
 
-  window.addEventListener("scroll", checkBoxes);
+      boxes.forEach((box) => {
+        const boxTop = box.getBoundingClientRect().top;
 
-  checkBoxes();
+        if (boxTop < triggerBottom) {
+          box.classList.add("show");
+        } else {
+          box.classList.remove("show");
+        }
+      });
+    };
 
-  function checkBoxes() {
-    const triggerBottom = (window.innerHeight / 5) * 4;
+    // Add event listener
+    window.addEventListener("scroll", checkBoxes);
 
-    boxes.forEach((box) => {
-      const boxTop = box.getBoundingClientRect().top;
+    // Initial check
+    checkBoxes();
 
-      if (boxTop < triggerBottom) {
-        box.classList.add("show");
-      } else {
-        box.classList.remove("show");
-      }
-    });
-  }
+    // Cleanup function to remove event listener
+    return () => {
+      window.removeEventListener("scroll", checkBoxes);
+    };
+  }, []);
 
   useEffect(() => {
-    const getAnimals = () => {
-      axios
-        .get("https://acnhapi.com/v1a/villagers/")
-        .then((res) => {
-          setAnimalList(res.data);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+    const getAnimals = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get("https://acnhapi.com/v1a/villagers/");
+        setAnimalList(response.data);
+        setFilteredAnimals(response.data); // Initialize filtered list
+      } catch (err) {
+        setError("Failed to load animal data. Please try again later.");
+        console.error("Error fetching animals:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     getAnimals();
-  });
+  }, []); // Empty dependency array - runs only once on mount
 
-  const addClass = (event) => {
+  const toggleNav = () => {
     setShowNav((current) => !current);
   };
 
+  if (loading) {
+    return (
+      <section>
+        <div className="container">
+          <div style={{ textAlign: "center", padding: "2rem" }}>
+            <h2>Loading Animal Crossing villagers...</h2>
+            <p>Please wait while we fetch the data.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section>
+        <div className="container">
+          <div style={{ textAlign: "center", padding: "2rem" }}>
+            <h2>Oops! Something went wrong</h2>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Try Again</button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section>
-      <div className={ShowNav ? "show-nav container" : "container"}>
-        {/* this is where I'll put a search bar to find characters by name */}
+      <div className={showNav ? "show-nav container" : "container"}>
+        <Search animalList={animalList} onFilter={setFilteredAnimals} />
 
-        {/* <search>search</search> */}
-        <Search />
-        {/* I'll also put some filters for: gender, species, hobby, birthday, etc. */}
         <div className="circle-container">
           <div className="circle">
-            <button id="close" onClick={addClass}>
+            <button id="close" onClick={toggleNav}>
               <i className="fas fa-times"></i>
             </button>
 
-            <button id="open" onClick={addClass}>
+            <button id="open" onClick={toggleNav}>
               <i className="fas fa-bars"></i>
             </button>
           </div>
         </div>
-        <AnimalList animals={animalList} />
+        <AnimalList animals={filteredAnimals} />
       </div>
       <Nav />
     </section>
