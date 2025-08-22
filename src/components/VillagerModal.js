@@ -1,11 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useCollection } from "../contexts/CollectionContext";
+import LazyImage from "./LazyImage";
+import { useFocusTrap } from "../hooks/useKeyboardNavigation";
 
 export default function VillagerModal({ villager, isOpen, onClose }) {
   const { isInHaveList, isInWantList, toggleHave, toggleWant } =
     useCollection();
+  const modalRef = useRef();
+  const previousActiveElement = useRef();
 
-  // Close modal on ESC key
+  // Manage focus trap in modal
+  useFocusTrap(isOpen, modalRef);
+
+  // Enhanced modal management with accessibility
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
@@ -14,16 +21,41 @@ export default function VillagerModal({ villager, isOpen, onClose }) {
     };
 
     if (isOpen) {
+      // Store the previously focused element
+      previousActiveElement.current = document.activeElement;
+
+      // Add event listeners
       document.addEventListener("keydown", handleEscape);
+
       // Prevent body scroll when modal is open
       document.body.style.overflow = "hidden";
+
+      // Announce modal opening to screen readers
+      const announcement = document.createElement("div");
+      announcement.setAttribute("aria-live", "polite");
+      announcement.setAttribute("aria-atomic", "true");
+      announcement.className = "sr-only";
+      announcement.textContent = `Modal opened: ${villager.name["name-USen"]} details`;
+      document.body.appendChild(announcement);
+
+      // Remove announcement after screen reader has time to read it
+      setTimeout(() => {
+        if (document.body.contains(announcement)) {
+          document.body.removeChild(announcement);
+        }
+      }, 1000);
+    } else {
+      // Return focus to previously focused element when modal closes
+      if (previousActiveElement.current) {
+        previousActiveElement.current.focus();
+      }
     }
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, villager]);
 
   if (!isOpen || !villager) return null;
 
@@ -61,32 +93,65 @@ export default function VillagerModal({ villager, isOpen, onClose }) {
     );
   };
 
+  const modalId = `villager-modal-${villager.id}`;
+  const villagerName = villager.name["name-USen"];
+
   return (
-    <div className="modal-backdrop" onClick={handleBackdropClick}>
-      <div className="modal-content">
-        <button className="modal-close" onClick={onClose} title="Close (ESC)">
-          <i className="fas fa-times"></i>
+    <div
+      className="modal-backdrop"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+      aria-hidden={!isOpen}
+    >
+      <div
+        ref={modalRef}
+        className="modal-content"
+        id={modalId}
+        role="document"
+        aria-labelledby={`${modalId}-title`}
+        aria-describedby={`${modalId}-description`}
+      >
+        <button
+          className="modal-close"
+          onClick={onClose}
+          aria-label={`Close ${villagerName} details modal. Press Escape key to close.`}
+          title="Close (ESC)"
+        >
+          <i className="fas fa-times" aria-hidden="true"></i>
         </button>
 
-        <div
+        <header
           className="modal-header"
           style={{
             backgroundColor: villager["bubble-color"],
             color: villager["text-color"],
           }}
         >
-          <div className="modal-villager-image">
-            <img
+          <div
+            className="modal-villager-image"
+            role="img"
+            aria-label={`Portrait of ${villagerName}`}
+          >
+            <LazyImage
               src={villager.image_uri}
-              alt={villager.name["name-USen"]}
-              onError={(e) => {
-                e.target.src = "/api/placeholder/200/200";
-              }}
+              alt={`${villagerName}, a ${villager.species} villager with ${villager.personality} personality`}
+              className="modal-villager-img"
+              onError={() =>
+                console.log(`Failed to load modal image for ${villagerName}`)
+              }
             />
           </div>
           <div className="modal-villager-basic">
-            <h1>{villager.name["name-USen"]}</h1>
-            <p className="modal-species-gender">
+            <h1 id={`${modalId}-title`}>{villagerName}</h1>
+            <p
+              className="modal-species-gender"
+              aria-label={`Species: ${villager.species}, Gender: ${
+                villager.gender
+              }, Pronouns: ${
+                villager.gender === "Female" ? "She/Her" : "He/Him"
+              }`}
+            >
               {villager.species} •{" "}
               {villager.gender === "Female" ? "She/Her" : "He/Him"}
             </p>
@@ -119,10 +184,14 @@ export default function VillagerModal({ villager, isOpen, onClose }) {
               </button>
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className="modal-body">
-          <div className="modal-info-grid">
+        <main
+          className="modal-body"
+          id={`${modalId}-description`}
+          aria-label={`Detailed information about ${villagerName}`}
+        >
+          <section className="modal-info-grid" aria-label="Basic Information">
             <div className="info-card">
               <h3>
                 <i className="fas fa-theater-masks"></i> Personality
@@ -164,7 +233,7 @@ export default function VillagerModal({ villager, isOpen, onClose }) {
                 Their signature saying that makes them unique.
               </p>
             </div>
-          </div>
+          </section>
 
           <div className="modal-quote-section">
             <h3>
@@ -198,7 +267,7 @@ export default function VillagerModal({ villager, isOpen, onClose }) {
               </li>
             </ul>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

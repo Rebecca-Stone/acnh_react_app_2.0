@@ -10,6 +10,7 @@ import CollectionStats from "./components/CollectionStats";
 import ThemeToggle from "./components/ThemeToggle";
 import { CollectionProvider } from "./contexts/CollectionContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
 
 // Mock data as fallback when API is down
 const mockVillagers = [
@@ -66,6 +67,9 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedVillager, setSelectedVillager] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Enable keyboard navigation
+  useKeyboardNavigation(true);
 
   // Proper scroll handling with React
   useEffect(() => {
@@ -200,11 +204,23 @@ function App() {
   return (
     <ThemeProvider>
       <CollectionProvider>
-        <ThemeToggle />
-        <section>
-          <div className={showNav ? "show-nav container" : "container"}>
+        <div className="app-container">
+          {/* Skip to main content link for screen readers and keyboard users */}
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
+
+          <ThemeToggle />
+
+          <div
+            className={showNav ? "show-nav container" : "container"}
+            role="main"
+            id="main-content"
+          >
             {error && animalList.length > 0 && (
               <div
+                role="alert"
+                aria-live="polite"
                 style={{
                   background: "#fff3cd",
                   color: "#856404",
@@ -217,6 +233,12 @@ function App() {
                 ℹ️ {error}
               </div>
             )}
+
+            <header className="app-header">
+              <h1 className="sr-only">
+                Animal Crossing Villager Collection Manager
+              </h1>
+            </header>
 
             <Search onSearchChange={setSearchTerm} />
 
@@ -231,21 +253,39 @@ function App() {
               animalList={animalList}
             />
 
-            <div className="circle-container">
+            <nav className="circle-container" aria-label="Navigation controls">
               <div className="circle">
-                <button id="close" onClick={toggleNav}>
-                  <i className="fas fa-times"></i>
+                <button
+                  id="close"
+                  onClick={toggleNav}
+                  aria-label="Close navigation menu"
+                  aria-expanded={showNav}
+                >
+                  <i className="fas fa-times" aria-hidden="true"></i>
                 </button>
 
-                <button id="open" onClick={toggleNav}>
-                  <i className="fas fa-bars"></i>
+                <button
+                  id="open"
+                  onClick={toggleNav}
+                  aria-label="Open navigation menu"
+                  aria-expanded={showNav}
+                >
+                  <i className="fas fa-bars" aria-hidden="true"></i>
                 </button>
               </div>
-            </div>
-            <AnimalList
-              animals={filteredAnimals}
-              onVillagerClick={openVillagerModal}
-            />
+            </nav>
+
+            <main aria-label="Villager gallery">
+              <h2 className="sr-only">
+                {filteredAnimals.length} villager
+                {filteredAnimals.length !== 1 ? "s" : ""} found
+                {searchTerm && ` matching "${searchTerm}"`}
+              </h2>
+              <AnimalList
+                animals={filteredAnimals}
+                onVillagerClick={openVillagerModal}
+              />
+            </main>
           </div>
           <Nav />
 
@@ -254,7 +294,7 @@ function App() {
             isOpen={isModalOpen}
             onClose={closeVillagerModal}
           />
-        </section>
+        </div>
       </CollectionProvider>
     </ThemeProvider>
   );
