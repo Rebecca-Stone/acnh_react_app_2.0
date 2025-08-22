@@ -83,94 +83,16 @@ body {
   }
 }
 
+/* Enhanced navigation - using modern hamburger menu */
 .container.show-nav {
-  transform: rotate(-20deg);
+  /* Updated to work with new hamburger menu */
+  transform: scale(0.85) translateX(10%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.circle-container {
-  position: fixed;
-  top: -100px;
-  left: -100px;
-}
-
-.circle {
-  background-color: #ff7979;
-  height: 200px;
-  width: 200px;
-  border-radius: 50%;
-  position: relative;
-  transition: transform 0.5s linear;
-}
-
-.container.show-nav .circle {
-  transform: rotate(-70deg);
-}
-
-.circle button {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  height: 100px;
-  background: transparent;
-  border: 0;
-  font-size: 2.6rem;
-  color: #fff;
-}
-
-.circle button:focus {
-  outline: none;
-}
-
-.circle button#open {
-  left: 60%;
-}
-
-.circle button#close {
-  top: 60%;
-  transform: rotate(90deg);
-  transform-origin: top left;
-}
-
-.container.show-nav + nav li {
-  transform: translateX(0);
-  transition-delay: 0.1s;
-}
-
-nav {
-  position: sticky;
-  bottom: 60px;
-  left: 0;
-  z-index: 100;
-}
-
-nav ul {
-  list-style-type: none;
-  padding-left: 30px;
-}
-
-nav ul li {
-  text-transform: uppercase;
-  color: #fff;
-  margin: 40px 0;
-  transform: translateX(-100%);
-  transition: transform 0.4s ease-in;
-}
-
-nav ul li i {
-  font-size: 2rem;
-  margin-right: 10px;
-}
-
-nav ul li + li {
-  margin-left: 15px;
-  transform: translateX(-150%);
-}
-
-nav ul li + li + li {
-  margin-left: 30px;
-  transform: translateX(-200%);
-}
+/* Legacy styles removed - replaced with modern hamburger menu component */
 
 .content img {
   max-width: 100%;

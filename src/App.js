@@ -2,9 +2,10 @@ import "./App.css";
 import "./styles/EnhancedModal.css";
 import "./styles/ModalToggle.css";
 import "./styles/SchemaValidator.css";
+import "./styles/HamburgerMenu.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Nav from "./helpers/Nav";
+
 import AnimalList from "./animalComponents/AnimalList";
 import Search from "./helpers/Search";
 import Filter from "./helpers/Filter";
@@ -13,6 +14,7 @@ import EnhancedVillagerModal from "./components/EnhancedVillagerModal";
 import CollectionStats from "./components/CollectionStats";
 import ThemeToggle from "./components/ThemeToggle";
 import SchemaValidator from "./components/SchemaValidator";
+import HamburgerMenu from "./components/HamburgerMenu";
 import { CollectionProvider } from "./contexts/CollectionContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
@@ -269,8 +271,49 @@ function App() {
             </label>
           </div>
 
+          {/* Enhanced Hamburger Menu */}
+          <HamburgerMenu isOpen={showNav} onToggle={toggleNav} />
+
+          {/* Enhanced Navigation Overlay */}
           <div
-            className={showNav ? "show-nav container" : "container"}
+            className={`nav-container ${
+              showNav ? "nav-container--active" : ""
+            }`}
+          >
+            <nav role="navigation" aria-label="Main navigation">
+              <ul className="nav-list">
+                <li className="nav-item">
+                  <a href="#home" className="nav-link">
+                    <i className="fas fa-home nav-icon" aria-hidden="true"></i>
+                    <span>Home</span>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a href="#about" className="nav-link">
+                    <i
+                      className="fas fa-user-alt nav-icon"
+                      aria-hidden="true"
+                    ></i>
+                    <span>About</span>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a href="#contact" className="nav-link">
+                    <i
+                      className="fas fa-envelope nav-icon"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Contact</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+
+          <div
+            className={`main-content ${
+              showNav ? "main-content--nav-open" : ""
+            }`}
             role="main"
             id="main-content"
           >
@@ -326,28 +369,6 @@ function App() {
               {useEnhancedModal ? "enhanced" : "basic"} modal
             </div>
 
-            <nav className="circle-container" aria-label="Navigation controls">
-              <div className="circle">
-                <button
-                  id="close"
-                  onClick={toggleNav}
-                  aria-label="Close navigation menu"
-                  aria-expanded={showNav}
-                >
-                  <i className="fas fa-times" aria-hidden="true"></i>
-                </button>
-
-                <button
-                  id="open"
-                  onClick={toggleNav}
-                  aria-label="Open navigation menu"
-                  aria-expanded={showNav}
-                >
-                  <i className="fas fa-bars" aria-hidden="true"></i>
-                </button>
-              </div>
-            </nav>
-
             <main aria-label="Villager gallery">
               <h2 className="sr-only">
                 {filteredAnimals.length} villager
@@ -360,7 +381,6 @@ function App() {
               />
             </main>
           </div>
-          <Nav />
 
           {/* Villager Detail Modal */}
           {useEnhancedModal ? (
