@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import {
+  createUniversalFilter,
+  createFilterOptions,
+} from "../utils/unifiedFilter";
 
 const Filter = React.memo(
   function Filter({ animalList, onFilter, searchTerm }) {
@@ -9,71 +13,25 @@ const Filter = React.memo(
       hobby: "",
     });
 
-    // Memoize unique values for dropdown options
-    const speciesOptions = useMemo(() => {
-      if (!animalList || animalList.length === 0) return [];
-      const values = animalList.map((animal) => animal.species).filter(Boolean);
-      return [...new Set(values)].sort();
-    }, [animalList]);
-
-    const personalityOptions = useMemo(() => {
-      if (!animalList || animalList.length === 0) return [];
-      const values = animalList
-        .map((animal) => animal.personality)
-        .filter(Boolean);
-      return [...new Set(values)].sort();
-    }, [animalList]);
-
-    const genderOptions = useMemo(() => {
-      if (!animalList || animalList.length === 0) return [];
-      const values = animalList.map((animal) => animal.gender).filter(Boolean);
-      return [...new Set(values)].sort();
-    }, [animalList]);
-
-    const hobbyOptions = useMemo(() => {
-      if (!animalList || animalList.length === 0) return [];
-      const values = animalList.map((animal) => animal.hobby).filter(Boolean);
-      return [...new Set(values)].sort();
+    // Generate filter options using utility function
+    const filterOptions = useMemo(() => {
+      return createFilterOptions(animalList);
     }, [animalList]);
 
     // Apply filters whenever filters or search term changes
     useEffect(() => {
-      if (!animalList || animalList.length === 0) return;
-
-      let filtered = animalList;
-
-      // Apply search term filter
-      if (searchTerm) {
-        filtered = filtered.filter(
-          (animal) =>
-            animal.name["name-USen"]
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase()) ||
-            animal.species.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            animal.personality.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+      if (!animalList || animalList.length === 0) {
+        onFilter([]);
+        return;
       }
 
-      // Apply dropdown filters
-      if (filters.species) {
-        filtered = filtered.filter(
-          (animal) => animal.species === filters.species
-        );
-      }
-      if (filters.personality) {
-        filtered = filtered.filter(
-          (animal) => animal.personality === filters.personality
-        );
-      }
-      if (filters.gender) {
-        filtered = filtered.filter(
-          (animal) => animal.gender === filters.gender
-        );
-      }
-      if (filters.hobby) {
-        filtered = filtered.filter((animal) => animal.hobby === filters.hobby);
-      }
+      // Combine search term and dropdown filters
+      const combinedFilters = {
+        ...filters,
+        searchTerm: searchTerm,
+      };
 
+      const filtered = createUniversalFilter(animalList, combinedFilters);
       onFilter(filtered);
     }, [filters, searchTerm, animalList, onFilter]);
 
@@ -122,7 +80,7 @@ const Filter = React.memo(
               className="filter-select"
             >
               <option value="">All Species</option>
-              {speciesOptions.map((species) => (
+              {filterOptions.species.map((species) => (
                 <option key={species} value={species}>
                   {species}
                 </option>
@@ -141,7 +99,7 @@ const Filter = React.memo(
               className="filter-select"
             >
               <option value="">All Personalities</option>
-              {personalityOptions.map((personality) => (
+              {filterOptions.personality.map((personality) => (
                 <option key={personality} value={personality}>
                   {personality}
                 </option>
@@ -158,7 +116,7 @@ const Filter = React.memo(
               className="filter-select"
             >
               <option value="">All Genders</option>
-              {genderOptions.map((gender) => (
+              {filterOptions.gender.map((gender) => (
                 <option key={gender} value={gender}>
                   {gender}
                 </option>
@@ -175,7 +133,7 @@ const Filter = React.memo(
               className="filter-select"
             >
               <option value="">All Hobbies</option>
-              {hobbyOptions.map((hobby) => (
+              {filterOptions.hobby.map((hobby) => (
                 <option key={hobby} value={hobby}>
                   {hobby}
                 </option>

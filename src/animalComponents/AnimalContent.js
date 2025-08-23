@@ -2,19 +2,36 @@ import React from "react";
 import "../App.css";
 import { AnimalPhoto } from "./AnimalPhoto";
 import Buttons from "./Buttons";
+import { getVillagerField } from "../utils/villagerDataAccessor";
+import {
+  getCardColorsFromFavorites,
+  getContrastingTextColor,
+} from "../utils/colorMapper";
 
 const Content = React.memo(
   function Content(props) {
-    let { gender, image_uri, hobby, personality, saying, species } =
-      props.animal;
+    const { animal, onVillagerClick } = props;
+
+    // Use data accessor for consistent data access
+    const villagerName = getVillagerField(animal, "name");
+    const species = getVillagerField(animal, "species");
+    const gender = getVillagerField(animal, "gender");
+    const displayGender = getVillagerField(animal, "displayGender");
+    const personality = getVillagerField(animal, "personality");
+    const hobby = getVillagerField(animal, "hobby");
+    const birthday = getVillagerField(animal, "birthday");
+    const saying = getVillagerField(animal, "saying");
+    const catchphrase = getVillagerField(animal, "catchphrase");
+    const imageUrl = getVillagerField(animal, "imageUrl");
+    const cardId = `villager-card-${getVillagerField(animal, "id")}`;
 
     const handleCardClick = (e) => {
       // Don't trigger modal if clicking on buttons
       if (e.target.closest(".villager-buttons")) {
         return;
       }
-      if (props.onVillagerClick) {
-        props.onVillagerClick(props.animal);
+      if (onVillagerClick) {
+        onVillagerClick(animal);
       }
     };
 
@@ -25,16 +42,20 @@ const Content = React.memo(
       }
     };
 
-    const villagerName = props.animal.name["name-USen"];
-    const cardId = `villager-card-${props.animal.id}`;
+    // Get colors from favorite_colors with fallback to current system
+    const cardColors = getCardColorsFromFavorites(animal);
+    const finalTextColor = getContrastingTextColor(
+      cardColors.backgroundColor,
+      cardColors.textColor
+    );
 
     return (
       <article
         id={cardId}
         className="animal-details content box clickable-card"
         style={{
-          color: props.animal["text-color"],
-          backgroundColor: props.animal["bubble-color"],
+          color: finalTextColor,
+          backgroundColor: cardColors.backgroundColor,
         }}
         onClick={handleCardClick}
         onKeyDown={handleKeyDown}
@@ -46,12 +67,12 @@ const Content = React.memo(
         <header>
           <h2>{villagerName}</h2>
           <p className="villager-basic-info">
-            {species} - {gender === "Female" ? "She/Her" : "He/Him"}
+            {species} - {displayGender}
           </p>
         </header>
 
         <div className="villager-photo-container">
-          <AnimalPhoto photo={image_uri} name={villagerName} />
+          <AnimalPhoto photo={imageUrl} name={villagerName} />
         </div>
 
         <div id={`${cardId}-description`} className="villager-details-text">
@@ -62,23 +83,23 @@ const Content = React.memo(
           </p>
           <p className="villager-birthday">
             <span className="sr-only">Birthday:</span>
-            <span aria-label={`Birthday is ${props.animal["birthday-string"]}`}>
-              Birthday: {props.animal["birthday-string"]}
+            <span aria-label={`Birthday is ${birthday}`}>
+              Birthday: {birthday || "Unknown"}
             </span>
           </p>
           <blockquote className="villager-saying">
             <span className="sr-only">Famous quote:</span>"{saying}"
             <span
               className="catchphrase"
-              aria-label={`Catchphrase: ${props.animal["catch-phrase"]}`}
+              aria-label={`Catchphrase: ${catchphrase}`}
             >
-              {props.animal["catch-phrase"]}
+              {catchphrase || ""}
             </span>
           </blockquote>
         </div>
 
         <footer className="villager-actions">
-          <Buttons villagerId={props.animal.id} />
+          <Buttons villagerId={getVillagerField(animal, "id")} />
         </footer>
       </article>
     );
@@ -86,9 +107,10 @@ const Content = React.memo(
   (prevProps, nextProps) => {
     // Custom comparison: only re-render if animal data or click handler changes
     return (
-      prevProps.animal.id === nextProps.animal.id &&
-      prevProps.animal.name["name-USen"] ===
-        nextProps.animal.name["name-USen"] &&
+      getVillagerField(prevProps.animal, "id") ===
+        getVillagerField(nextProps.animal, "id") &&
+      getVillagerField(prevProps.animal, "name") ===
+        getVillagerField(nextProps.animal, "name") &&
       prevProps.onVillagerClick === nextProps.onVillagerClick
     );
   }

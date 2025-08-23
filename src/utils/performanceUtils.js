@@ -26,7 +26,7 @@ export const throttle = (func, delay) => {
     if (!inThrottle) {
       func.apply(null, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, delay);
+      setTimeout(() => (inThrottle = false), delay);
     }
   };
 };
@@ -39,23 +39,23 @@ export const throttle = (func, delay) => {
  */
 export const memoize = (fn, getKey = (...args) => JSON.stringify(args)) => {
   const cache = new Map();
-  
+
   return (...args) => {
     const key = getKey(...args);
-    
+
     if (cache.has(key)) {
       return cache.get(key);
     }
-    
+
     const result = fn(...args);
     cache.set(key, result);
-    
+
     // Limit cache size to prevent memory leaks
     if (cache.size > 1000) {
       const firstKey = cache.keys().next().value;
       cache.delete(firstKey);
     }
-    
+
     return result;
   };
 };
@@ -78,7 +78,7 @@ export const batchUpdates = (updateFn) => {
 
   return (update) => {
     pendingUpdates.push(update);
-    
+
     if (!isScheduled) {
       isScheduled = true;
       requestAnimationFrame(flush);
@@ -95,49 +95,60 @@ export const batchUpdates = (updateFn) => {
  * @param {number} buffer - Number of extra items to render (default: 5)
  * @returns {Object} Visible items and offset
  */
-export const getVirtualScrollItems = (items, containerHeight, itemHeight, scrollTop, buffer = 5) => {
+export const getVirtualScrollItems = (
+  items,
+  containerHeight,
+  itemHeight,
+  scrollTop,
+  buffer = 5
+) => {
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - buffer);
   const endIndex = Math.min(
     items.length - 1,
     Math.ceil((scrollTop + containerHeight) / itemHeight) + buffer
   );
-  
+
   const visibleItems = items.slice(startIndex, endIndex + 1);
   const offsetY = startIndex * itemHeight;
-  
+
   return {
     visibleItems,
     startIndex,
     endIndex,
     offsetY,
-    totalHeight: items.length * itemHeight
+    totalHeight: items.length * itemHeight,
   };
 };
 
 /**
  * Measure component performance
  * @param {string} name - Performance mark name
- * @param {Function} fn - Function to measure
- * @returns {*} Function result
+ * @param {Function} fn - Function to measure (can be async)
+ * @returns {*} Function result (Promise if fn is async)
  */
-export const measurePerformance = (name, fn) => {
+export const measurePerformance = async (name, fn) => {
   const startMark = `${name}-start`;
   const endMark = `${name}-end`;
   const measureName = `${name}-measure`;
 
-  performance.mark(startMark);
-  const result = fn();
-  performance.mark(endMark);
-  
   try {
-    performance.measure(measureName, startMark, endMark);
-    const measure = performance.getEntriesByName(measureName)[0];
-    console.log(`⚡ ${name}: ${measure.duration.toFixed(2)}ms`);
+    performance.mark(startMark);
+    const result = await fn();
+    performance.mark(endMark);
+
+    try {
+      performance.measure(measureName, startMark, endMark);
+      const measure = performance.getEntriesByName(measureName)[0];
+      console.log(`⚡ ${name}: ${measure.duration.toFixed(2)}ms`);
+    } catch (error) {
+      console.warn(`Performance measurement failed for ${name}:`, error);
+    }
+
+    return result;
   } catch (error) {
-    console.warn(`Performance measurement failed for ${name}:`, error);
+    console.error(`Error in measured function ${name}:`, error);
+    throw error; // Re-throw the error so it can be handled upstream
   }
-  
-  return result;
 };
 
 /**
@@ -145,26 +156,35 @@ export const measurePerformance = (name, fn) => {
  * @returns {boolean} True if device appears to have limited resources
  */
 export const isLowEndDevice = () => {
-  // Check various indicators of device performance
-  const checks = {
-    // Low CPU core count
-    lowCores: navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2,
-    
-    // Low memory (if available)
-    lowMemory: navigator.deviceMemory && navigator.deviceMemory <= 2,
-    
-    // Slow network connection
-    slowConnection: navigator.connection && 
-      (navigator.connection.effectiveType === 'slow-2g' || 
-       navigator.connection.effectiveType === '2g'),
-    
-    // Battery saver mode (if available)
-    batterySaver: navigator.getBattery && 
-      navigator.getBattery().then(battery => battery.level < 0.2),
-  };
+  try {
+    // Check various indicators of device performance
+    const checks = {
+      // Low CPU core count
+      lowCores:
+        navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2,
 
-  // Return true if any performance indicators suggest a low-end device
-  return Object.values(checks).some(check => check === true);
+      // Low memory (if available)
+      lowMemory: navigator.deviceMemory && navigator.deviceMemory <= 2,
+
+      // Slow network connection
+      slowConnection:
+        navigator.connection &&
+        (navigator.connection.effectiveType === "slow-2g" ||
+          navigator.connection.effectiveType === "2g"),
+
+      // Check for mobile devices (simplified battery check)
+      mobileDevice:
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ),
+    };
+
+    // Return true if any performance indicators suggest a low-end device
+    return Object.values(checks).some((check) => check === true);
+  } catch (error) {
+    console.warn("Error checking device performance:", error);
+    return false; // Default to false if detection fails
+  }
 };
 
 /**
@@ -181,15 +201,15 @@ export const performantFilter = async (items, filterFn, chunkSize = 100) => {
 
     const processChunk = () => {
       const end = Math.min(index + chunkSize, items.length);
-      
+
       for (let i = index; i < end; i++) {
         if (filterFn(items[i])) {
           results.push(items[i]);
         }
       }
-      
+
       index = end;
-      
+
       if (index < items.length) {
         // Use setTimeout to avoid blocking the main thread
         setTimeout(processChunk, 0);
@@ -225,6 +245,6 @@ export const chunkArray = (array, size) => {
 export const shouldLazyLoad = (element, rootMargin = 100) => {
   const rect = element.getBoundingClientRect();
   const windowHeight = window.innerHeight;
-  
+
   return rect.top < windowHeight + rootMargin && rect.bottom > -rootMargin;
 };

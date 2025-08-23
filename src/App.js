@@ -1,17 +1,16 @@
 import "./App.css";
+import "./styles/utilities.css";
 import "./styles/EnhancedModal.css";
 import "./styles/ModalToggle.css";
 import "./styles/SchemaValidator.css";
 import "./styles/HamburgerMenu.css";
 import "./styles/EnhancedBackground.css";
 import "./styles/EnhancedSearch.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 import AnimalList from "./animalComponents/AnimalList";
-import Search from "./helpers/Search";
-import EnhancedSearch from "./components/EnhancedSearch";
-import OptimizedSearch from "./components/OptimizedSearch";
+import UnifiedSearch from "./components/UnifiedSearch";
 import Filter from "./helpers/Filter";
 import VillagerModal from "./components/VillagerModal";
 import EnhancedVillagerModal from "./components/EnhancedVillagerModal";
@@ -31,6 +30,10 @@ import {
   getDataSourceInfo,
   validateDataIntegrity,
 } from "./utils/dataLoader";
+import {
+  measurePerformance,
+  isLowEndDevice as checkIsLowEndDevice,
+} from "./utils/performanceUtils";
 import sampleVillagersNewFormat from "./data/sampleVillagers";
 
 // Convert new format sample data to compatible format for existing components
@@ -122,16 +125,20 @@ function App() {
         setError(null);
 
         console.log("🚀 Initializing ACNH villager data loading system...");
-        
+
         // Check device performance capabilities
-        const devicePerf = isLowEndDevice();
+        const devicePerf = checkIsLowEndDevice();
         setIsLowEndDevice(devicePerf);
         if (devicePerf) {
-          console.log("📱 Low-end device detected, enabling performance optimizations");
+          console.log(
+            "📱 Low-end device detected, enabling performance optimizations"
+          );
         }
 
         // Use the comprehensive data loader with performance measurement
-        const result = await measurePerformance("data-loading", () => loadVillagerData());
+        const result = await measurePerformance("data-loading", () =>
+          loadVillagerData()
+        );
 
         // Validate data integrity
         const validation = validateDataIntegrity(result.data, result.source);
@@ -177,15 +184,20 @@ function App() {
     setShowNav((current) => !current);
   };
 
-  const openVillagerModal = (villager) => {
+  const openVillagerModal = useCallback((villager) => {
     setSelectedVillager(villager);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const closeVillagerModal = () => {
+  const closeVillagerModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedVillager(null);
-  };
+  }, []);
+
+  // Memoized search change handler to prevent unnecessary re-renders
+  const handleSearchChange = useCallback((term) => {
+    setSearchTerm(term);
+  }, []);
 
   if (loading) {
     return (
@@ -395,21 +407,18 @@ function App() {
               </h1>
             </header>
 
-                        {useEnhancedSearch ? (
-              isLowEndDevice ? (
-                <OptimizedSearch 
-                  onSearchChange={handleSearchChange}
-                  animalList={animalList}
-                />
-              ) : (
-                <EnhancedSearch 
-                  onSearchChange={handleSearchChange}
-                  animalList={animalList}
-                />
-              )
-            ) : (
-              <Search onSearchChange={handleSearchChange} />
-            )}
+            <UnifiedSearch
+              onSearchChange={handleSearchChange}
+              animalList={animalList}
+              variant={
+                useEnhancedSearch
+                  ? isLowEndDevice
+                    ? "optimized"
+                    : "enhanced"
+                  : "basic"
+              }
+              isLowEndDevice={isLowEndDevice}
+            />
 
             <Filter
               animalList={animalList}
