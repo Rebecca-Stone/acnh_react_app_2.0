@@ -1,38 +1,42 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useCollection } from "../contexts/CollectionContext";
 
-export default function CollectionStats({ totalVillagers, animalList }) {
+const CollectionStats = React.memo(function CollectionStats({ totalVillagers, animalList }) {
   const { haveList, getCollectionStats } = useCollection();
   const stats = getCollectionStats();
 
-  // Calculate percentages
-  const havePercentage =
-    totalVillagers > 0 ? (stats.haveCount / totalVillagers) * 100 : 0;
-  const wantPercentage =
-    totalVillagers > 0 ? (stats.wantCount / totalVillagers) * 100 : 0;
-  const trackedPercentage =
-    totalVillagers > 0 ? (stats.totalTracked / totalVillagers) * 100 : 0;
+  // Memoize expensive percentage calculations
+  const percentages = useMemo(() => ({
+    have: totalVillagers > 0 ? (stats.haveCount / totalVillagers) * 100 : 0,
+    want: totalVillagers > 0 ? (stats.wantCount / totalVillagers) * 100 : 0,
+    tracked: totalVillagers > 0 ? (stats.totalTracked / totalVillagers) * 100 : 0,
+  }), [totalVillagers, stats.haveCount, stats.wantCount, stats.totalTracked]);
 
-  // Get favorite stats from collection
-  const getFavoriteStats = () => {
+  // Memoize expensive favorite stats calculation
+  const favoriteStats = useMemo(() => {
     if (!animalList || animalList.length === 0 || haveList.length === 0) {
       return null;
     }
+
+    console.log(`📊 Calculating collection insights for ${haveList.length} collected villagers`);
 
     const collectedVillagers = animalList.filter((v) =>
       haveList.includes(v.id)
     );
 
-    // Count species in collection
+    // Count species and personalities in collection
     const speciesCount = {};
     const personalityCount = {};
 
     collectedVillagers.forEach((villager) => {
-      speciesCount[villager.species] =
-        (speciesCount[villager.species] || 0) + 1;
-      personalityCount[villager.personality] =
-        (personalityCount[villager.personality] || 0) + 1;
+      const species = villager.species || "Unknown";
+      const personality = villager.personality || "Unknown";
+      
+      speciesCount[species] = (speciesCount[species] || 0) + 1;
+      personalityCount[personality] = (personalityCount[personality] || 0) + 1;
     });
+
+    if (Object.keys(speciesCount).length === 0) return null;
 
     const favoriteSpecies = Object.keys(speciesCount).reduce(
       (a, b) => (speciesCount[a] > speciesCount[b] ? a : b),
@@ -50,11 +54,10 @@ export default function CollectionStats({ totalVillagers, animalList }) {
       speciesCount: speciesCount[favoriteSpecies] || 0,
       personalityCount: personalityCount[favoritePersonality] || 0,
     };
-  };
+  }, [animalList, haveList]);
 
-  const favoriteStats = getFavoriteStats();
-
-  const getMotivationalMessage = () => {
+  // Memoize motivational message to avoid recalculation
+  const motivationalMessage = useMemo(() => {
     if (stats.haveCount === 0 && stats.wantCount === 0) {
       return "Start building your collection! Click the ❤️ and ⭐ buttons on villager cards.";
     } else if (stats.haveCount === 0) {
@@ -63,10 +66,12 @@ export default function CollectionStats({ totalVillagers, animalList }) {
       return "Great start! Keep building your collection.";
     } else if (stats.haveCount < 10) {
       return "You're building an impressive collection!";
+    } else if (stats.haveCount >= 50) {
+      return "🎉 Master Collector! You have an amazing island community!";
     } else {
       return "Wow! You're a serious collector! 🏆";
     }
-  };
+  }, [stats.haveCount, stats.wantCount]);
 
   return (
     <div className="collection-stats">
@@ -74,7 +79,7 @@ export default function CollectionStats({ totalVillagers, animalList }) {
         <h2>
           <i className="fas fa-chart-bar"></i> Collection Stats
         </h2>
-        <p className="motivational-message">{getMotivationalMessage()}</p>
+        <p className="motivational-message">{motivationalMessage}</p>
       </div>
 
       <div className="stats-grid">
@@ -89,10 +94,10 @@ export default function CollectionStats({ totalVillagers, animalList }) {
             <div className="progress-bar">
               <div
                 className="progress-fill have-progress"
-                style={{ width: `${Math.min(havePercentage, 100)}%` }}
+                style={{ width: `${Math.min(percentages.have, 100)}%` }}
               ></div>
             </div>
-            <small>{havePercentage.toFixed(1)}% of available</small>
+            <small>{percentages.have.toFixed(1)}% of available</small>
           </div>
         </div>
 
@@ -107,10 +112,10 @@ export default function CollectionStats({ totalVillagers, animalList }) {
             <div className="progress-bar">
               <div
                 className="progress-fill want-progress"
-                style={{ width: `${Math.min(wantPercentage, 100)}%` }}
+                style={{ width: `${Math.min(percentages.want, 100)}%` }}
               ></div>
             </div>
-            <small>{wantPercentage.toFixed(1)}% of available</small>
+            <small>{percentages.want.toFixed(1)}% of available</small>
           </div>
         </div>
 
@@ -125,10 +130,10 @@ export default function CollectionStats({ totalVillagers, animalList }) {
             <div className="progress-bar">
               <div
                 className="progress-fill total-progress"
-                style={{ width: `${Math.min(trackedPercentage, 100)}%` }}
+                style={{ width: `${Math.min(percentages.tracked, 100)}%` }}
               ></div>
             </div>
-            <small>{trackedPercentage.toFixed(1)}% of available</small>
+            <small>{percentages.tracked.toFixed(1)}% of available</small>
           </div>
         </div>
       </div>
@@ -174,4 +179,12 @@ export default function CollectionStats({ totalVillagers, animalList }) {
       )}
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Optimize re-renders by comparing props
+  return (
+    prevProps.totalVillagers === nextProps.totalVillagers &&
+    prevProps.animalList === nextProps.animalList
+  );
+});
+
+export default CollectionStats;

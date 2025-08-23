@@ -11,6 +11,7 @@ import axios from "axios";
 import AnimalList from "./animalComponents/AnimalList";
 import Search from "./helpers/Search";
 import EnhancedSearch from "./components/EnhancedSearch";
+import OptimizedSearch from "./components/OptimizedSearch";
 import Filter from "./helpers/Filter";
 import VillagerModal from "./components/VillagerModal";
 import EnhancedVillagerModal from "./components/EnhancedVillagerModal";
@@ -25,7 +26,11 @@ import {
   normalizeVillagerData,
   getCompatibleVillagerData,
 } from "./utils/dataAdapter";
-import { loadVillagerData, getDataSourceInfo, validateDataIntegrity } from "./utils/dataLoader";
+import {
+  loadVillagerData,
+  getDataSourceInfo,
+  validateDataIntegrity,
+} from "./utils/dataLoader";
 import sampleVillagersNewFormat from "./data/sampleVillagers";
 
 // Convert new format sample data to compatible format for existing components
@@ -50,6 +55,7 @@ function App() {
   const [dataFormat, setDataFormat] = useState("mixed"); // Track data format: 'old', 'new', or 'mixed'
   const [dataSource, setDataSource] = useState("unknown"); // Track data source: 'real', 'api', 'sample'
   const [dataStats, setDataStats] = useState({}); // Statistics about loaded data
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false); // Track device performance
 
   // Enable keyboard navigation
   useKeyboardNavigation(true);
@@ -117,9 +123,16 @@ function App() {
 
         console.log("🚀 Initializing ACNH villager data loading system...");
         
-        // Use the comprehensive data loader
-        const result = await loadVillagerData();
-        
+        // Check device performance capabilities
+        const devicePerf = isLowEndDevice();
+        setIsLowEndDevice(devicePerf);
+        if (devicePerf) {
+          console.log("📱 Low-end device detected, enabling performance optimizations");
+        }
+
+        // Use the comprehensive data loader with performance measurement
+        const result = await measurePerformance("data-loading", () => loadVillagerData());
+
         // Validate data integrity
         const validation = validateDataIntegrity(result.data, result.source);
         if (!validation.isValid) {
@@ -131,7 +144,7 @@ function App() {
         setDataFormat(result.format);
         setDataSource(result.source);
         setDataStats(result.stats);
-        
+
         // Set appropriate error/info messages
         if (result.error) {
           setError(result.error);
@@ -145,7 +158,6 @@ function App() {
         if (sourceInfo.features.length > 0) {
           console.log("✨ Available features:", sourceInfo.features.join(", "));
         }
-
       } catch (err) {
         console.error("💥 Critical error in data loading system:", err);
         setError("Failed to load villager data. Please refresh the page.");
@@ -317,12 +329,28 @@ function App() {
                 aria-live="polite"
                 className="data-status-alert"
                 style={{
-                  background: dataSource === "real" ? "#d4edda" : dataSource === "api" ? "#fff3cd" : "#fff3cd",
-                  color: dataSource === "real" ? "#155724" : dataSource === "api" ? "#856404" : "#856404",
+                  background:
+                    dataSource === "real"
+                      ? "#d4edda"
+                      : dataSource === "api"
+                      ? "#fff3cd"
+                      : "#fff3cd",
+                  color:
+                    dataSource === "real"
+                      ? "#155724"
+                      : dataSource === "api"
+                      ? "#856404"
+                      : "#856404",
                   padding: "12px 16px",
                   borderRadius: "8px",
                   marginBottom: "20px",
-                  border: `1px solid ${dataSource === "real" ? "#c3e6cb" : dataSource === "api" ? "#ffeaa7" : "#ffeaa7"}`,
+                  border: `1px solid ${
+                    dataSource === "real"
+                      ? "#c3e6cb"
+                      : dataSource === "api"
+                      ? "#ffeaa7"
+                      : "#ffeaa7"
+                  }`,
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
@@ -331,14 +359,27 @@ function App() {
                 }}
               >
                 <span>
-                  {dataSource === "real" ? "🎉" : dataSource === "api" ? "✨" : "ℹ️"}
+                  {dataSource === "real"
+                    ? "🎉"
+                    : dataSource === "api"
+                    ? "✨"
+                    : "ℹ️"}
                 </span>
                 <div>
                   {dataSource === "real" ? (
                     <div>
                       <strong>Complete ACNH Database Loaded!</strong>
-                      <div style={{ fontSize: "12px", opacity: 0.9, marginTop: "4px" }}>
-                        {dataStats.totalVillagers} villagers • {dataStats.withPosterImages} posters • {dataStats.withGiftPreferences} gift preferences • {dataStats.withHobbies} hobbies
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          opacity: 0.9,
+                          marginTop: "4px",
+                        }}
+                      >
+                        {dataStats.totalVillagers} villagers •{" "}
+                        {dataStats.withPosterImages} posters •{" "}
+                        {dataStats.withGiftPreferences} gift preferences •{" "}
+                        {dataStats.withHobbies} hobbies
                       </div>
                     </div>
                   ) : (
@@ -354,13 +395,20 @@ function App() {
               </h1>
             </header>
 
-            {useEnhancedSearch ? (
-              <EnhancedSearch
-                onSearchChange={setSearchTerm}
-                animalList={animalList}
-              />
+                        {useEnhancedSearch ? (
+              isLowEndDevice ? (
+                <OptimizedSearch 
+                  onSearchChange={handleSearchChange}
+                  animalList={animalList}
+                />
+              ) : (
+                <EnhancedSearch 
+                  onSearchChange={handleSearchChange}
+                  animalList={animalList}
+                />
+              )
             ) : (
-              <Search onSearchChange={setSearchTerm} />
+              <Search onSearchChange={handleSearchChange} />
             )}
 
             <Filter
