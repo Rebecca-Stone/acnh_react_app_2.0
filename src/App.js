@@ -25,6 +25,7 @@ import {
   normalizeVillagerData,
   getCompatibleVillagerData,
 } from "./utils/dataAdapter";
+import { loadVillagerData, getDataSourceInfo, validateDataIntegrity } from "./utils/dataLoader";
 import sampleVillagersNewFormat from "./data/sampleVillagers";
 
 // Convert new format sample data to compatible format for existing components
@@ -47,6 +48,8 @@ function App() {
   const [showValidator, setShowValidator] = useState(false); // Toggle schema validator
   const [useEnhancedSearch, setUseEnhancedSearch] = useState(true); // Toggle between search types
   const [dataFormat, setDataFormat] = useState("mixed"); // Track data format: 'old', 'new', or 'mixed'
+  const [dataSource, setDataSource] = useState("unknown"); // Track data source: 'real', 'api', 'sample'
+  const [dataStats, setDataStats] = useState({}); // Statistics about loaded data
 
   // Enable keyboard navigation
   useKeyboardNavigation(true);
@@ -112,78 +115,44 @@ function App() {
         setLoading(true);
         setError(null);
 
-        // Try to load data from multiple sources
-        let rawData = null;
-        let sourceFormat = "unknown";
-
-        try {
-          // Try the original ACNH API first
-          console.log("Attempting to load from ACNH API...");
-          const response = await axios.get(
-            "https://acnhapi.com/v1a/villagers/"
-          );
-          rawData = response.data;
-          sourceFormat = "old";
-          console.log("Successfully loaded from ACNH API (old format)");
-        } catch (apiErr) {
-          console.log("ACNH API unavailable, trying alternative sources...");
-
-          // Try loading from a new format API (placeholder for future)
-          try {
-            // Future: const newFormatResponse = await axios.get("https://api.newformat.com/villagers");
-            // rawData = newFormatResponse.data;
-            // sourceFormat = "new";
-            throw new Error("New format API not yet available");
-          } catch (newApiErr) {
-            console.log("No external APIs available, using sample data");
-            rawData = sampleVillagersNewFormat;
-            sourceFormat = "new";
-            setError(
-              "Using enhanced sample data (APIs temporarily unavailable)"
-            );
-          }
+        console.log("🚀 Initializing ACNH villager data loading system...");
+        
+        // Use the comprehensive data loader
+        const result = await loadVillagerData();
+        
+        // Validate data integrity
+        const validation = validateDataIntegrity(result.data, result.source);
+        if (!validation.isValid) {
+          console.warn("⚠️ Data validation issues:", validation.issues);
         }
 
-        // Normalize data regardless of source format
-        let normalizedData = [];
-
-        if (sourceFormat === "old") {
-          // Convert old API data to compatible format
-          normalizedData = Object.values(rawData).map((villager) =>
-            getCompatibleVillagerData(normalizeVillagerData([villager])[0])
-          );
-          setDataFormat("old");
-        } else if (sourceFormat === "new") {
-          // Convert new format data to compatible format for existing components
-          normalizedData = rawData.map((villager) =>
-            getCompatibleVillagerData(villager)
-          );
-          setDataFormat("new");
+        // Update state with loaded data
+        setAnimalList(result.data);
+        setDataFormat(result.format);
+        setDataSource(result.source);
+        setDataStats(result.stats);
+        
+        // Set appropriate error/info messages
+        if (result.error) {
+          setError(result.error);
+        } else {
+          setError(null);
         }
 
-        // Filter out any invalid entries
-        const validData = normalizedData.filter(
-          (villager) =>
-            villager &&
-            villager.name &&
-            typeof villager.name === "object" &&
-            villager.name["name-USen"]
-        );
+        // Log success details
+        const sourceInfo = getDataSourceInfo(result.source, result.stats);
+        console.log(`🎉 ${sourceInfo.title}: ${sourceInfo.description}`);
+        if (sourceInfo.features.length > 0) {
+          console.log("✨ Available features:", sourceInfo.features.join(", "));
+        }
 
-        console.log(
-          `Loaded ${validData.length} villagers in ${sourceFormat} format`
-        );
-        setAnimalList(validData);
-        setFilteredAnimals(validData);
       } catch (err) {
-        console.error("All data loading methods failed:", err);
-
-        // Last resort: use compatible sample data
-        const fallbackData = getCompatibleSampleData();
-        setAnimalList(fallbackData);
-        setFilteredAnimals(fallbackData);
-        setDataFormat("fallback");
-        setError("Using offline sample data (connection issues detected)");
+        console.error("💥 Critical error in data loading system:", err);
+        setError("Failed to load villager data. Please refresh the page.");
+        setAnimalList([]);
+        setDataFormat("error");
+        setDataSource("error");
+        setDataStats({});
       } finally {
         setLoading(false);
       }
@@ -342,20 +311,40 @@ function App() {
             role="main"
             id="main-content"
           >
-            {error && animalList.length > 0 && (
+            {(error || dataSource === "real") && animalList.length > 0 && (
               <div
                 role="alert"
                 aria-live="polite"
+                className="data-status-alert"
                 style={{
-                  background: "#fff3cd",
-                  color: "#856404",
-                  padding: "10px",
-                  borderRadius: "5px",
+                  background: dataSource === "real" ? "#d4edda" : dataSource === "api" ? "#fff3cd" : "#fff3cd",
+                  color: dataSource === "real" ? "#155724" : dataSource === "api" ? "#856404" : "#856404",
+                  padding: "12px 16px",
+                  borderRadius: "8px",
                   marginBottom: "20px",
-                  border: "1px solid #ffeaa7",
+                  border: `1px solid ${dataSource === "real" ? "#c3e6cb" : dataSource === "api" ? "#ffeaa7" : "#ffeaa7"}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontSize: "14px",
+                  fontWeight: "500",
                 }}
               >
-                ℹ️ {error}
+                <span>
+                  {dataSource === "real" ? "🎉" : dataSource === "api" ? "✨" : "ℹ️"}
+                </span>
+                <div>
+                  {dataSource === "real" ? (
+                    <div>
+                      <strong>Complete ACNH Database Loaded!</strong>
+                      <div style={{ fontSize: "12px", opacity: 0.9, marginTop: "4px" }}>
+                        {dataStats.totalVillagers} villagers • {dataStats.withPosterImages} posters • {dataStats.withGiftPreferences} gift preferences • {dataStats.withHobbies} hobbies
+                      </div>
+                    </div>
+                  ) : (
+                    error
+                  )}
+                </div>
               </div>
             )}
 
@@ -366,7 +355,7 @@ function App() {
             </header>
 
             {useEnhancedSearch ? (
-              <EnhancedSearch 
+              <EnhancedSearch
                 onSearchChange={setSearchTerm}
                 animalList={animalList}
               />
