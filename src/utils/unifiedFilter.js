@@ -5,7 +5,7 @@
  * Provides flexible, reusable filtering functions
  */
 
-import { getVillagerField, searchVillagers } from "./villagerDataAccessor";
+import { getVillagerField } from "./villagerDataAccessor";
 
 /**
  * Create a universal filter for villagers

@@ -467,9 +467,11 @@ const UnifiedSearch = React.memo(
                   setShowSuggestions(newSuggestions.length > 0);
                 }
               }}
+              role="combobox"
               aria-label="Search villagers"
               aria-expanded={showSuggestions}
               aria-haspopup="listbox"
+              aria-controls="search-suggestions"
               aria-activedescendant={
                 focusedSuggestion >= 0
                   ? `suggestion-${focusedSuggestion}`
@@ -514,6 +516,7 @@ const UnifiedSearch = React.memo(
             ref={suggestionsRef}
             className="enhanced-search__suggestions"
             role="listbox"
+            id="search-suggestions"
             aria-label="Search suggestions"
           >
             {suggestions.map((suggestion, index) => (

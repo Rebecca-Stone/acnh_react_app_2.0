@@ -1,14 +1,15 @@
-import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import React from "react";
 
-export default function HamburgerMenu({ isOpen, onToggle, className = '' }) {
-  const { theme } = useTheme();
+export default function HamburgerMenu({ isOpen, onToggle, className = "" }) {
+  // theme styling handled via CSS
 
   return (
     <button
-      className={`hamburger-menu ${isOpen ? 'hamburger-menu--active' : ''} ${className}`}
+      className={`hamburger-menu ${
+        isOpen ? "hamburger-menu--active" : ""
+      } ${className}`}
       onClick={onToggle}
-      aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+      aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
       aria-expanded={isOpen}
       type="button"
     >
@@ -18,10 +19,10 @@ export default function HamburgerMenu({ isOpen, onToggle, className = '' }) {
         <span className="hamburger-menu__line hamburger-menu__line--2"></span>
         <span className="hamburger-menu__line hamburger-menu__line--3"></span>
       </div>
-      
+
       {/* Accessibility label */}
       <span className="hamburger-menu__label">
-        {isOpen ? 'Close Menu' : 'Menu'}
+        {isOpen ? "Close Menu" : "Menu"}
       </span>
     </button>
   );

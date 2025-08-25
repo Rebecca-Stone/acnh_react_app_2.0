@@ -15,7 +15,7 @@ const Content = React.memo(
     // Use data accessor for consistent data access
     const villagerName = getVillagerField(animal, "name");
     const species = getVillagerField(animal, "species");
-    const gender = getVillagerField(animal, "gender");
+    // const gender = getVillagerField(animal, "gender"); // unused variable
     const displayGender = getVillagerField(animal, "displayGender");
     const personality = getVillagerField(animal, "personality");
     const hobby = getVillagerField(animal, "hobby");
