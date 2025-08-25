@@ -45,14 +45,22 @@ export const useModalBehavior = (isOpen, onClose, villager) => {
       }, 1000);
     } else {
       // Return focus to previously focused element when modal closes
-      if (previousActiveElement.current) {
+      if (
+        previousActiveElement.current &&
+        document.body.contains(previousActiveElement.current)
+      ) {
         previousActiveElement.current.focus();
       }
+      // Restore body scroll when modal closes
+      document.body.style.overflow = "unset";
     }
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
+      // Only restore scroll if we're unmounting, not just changing state
+      if (!isOpen) {
+        document.body.style.overflow = "unset";
+      }
     };
   }, [isOpen, onClose, villager]);
 

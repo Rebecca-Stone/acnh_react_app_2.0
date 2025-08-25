@@ -54,11 +54,4 @@
   color: var(--text-color);
 }
 
-/* Enhanced modal specific variables */
-:root {
-  --success-color: #28a745;
-  --success-dark: #1e7e34;
-  --warning-color: #ffc107;
-  --warning-dark: #e0a800;
-  --focus-color: #007bff;
-}
+/* These variables are now defined in App.css - keeping for reference */

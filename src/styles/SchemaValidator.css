@@ -53,7 +53,7 @@
 .sample-button:hover {
   background: var(--secondary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px var(--shadow-hover);
 }
 
 .validate-button {
@@ -64,7 +64,7 @@
 .validate-button:hover:not(:disabled) {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px var(--shadow-hover);
 }
 
 .validate-button:disabled {
@@ -92,7 +92,7 @@
   border-radius: 8px;
   background: var(--bg-color);
   color: var(--text-color);
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 0.85rem;
   line-height: 1.4;
   resize: vertical;
@@ -125,7 +125,7 @@
 
 .validation-result.invalid {
   background: rgba(220, 53, 69, 0.1);
-  border: 1px solid #dc3545;
+  border: 1px solid var(--error-color);
 }
 
 .result-header {
@@ -150,7 +150,7 @@
 }
 
 .validation-errors h5 {
-  color: #dc3545;
+  color: var(--error-color);
   margin: 0 0 0.5rem 0;
   font-size: 1rem;
 }
@@ -196,7 +196,7 @@
   border-radius: 4px;
   padding: 1rem;
   overflow-x: auto;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 0.8rem;
   line-height: 1.4;
   color: var(--text-color);

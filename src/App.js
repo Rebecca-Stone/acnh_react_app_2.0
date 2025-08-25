@@ -7,7 +7,7 @@ import "./styles/HamburgerMenu.css";
 import "./styles/EnhancedBackground.css";
 import "./styles/EnhancedSearch.css";
 import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+// axios removed - no longer needed
 
 import AnimalList from "./animalComponents/AnimalList";
 import UnifiedSearch from "./components/UnifiedSearch";
@@ -21,10 +21,9 @@ import HamburgerMenu from "./components/HamburgerMenu";
 import { CollectionProvider } from "./contexts/CollectionContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useKeyboardNavigation } from "./hooks/useKeyboardNavigation";
-import {
-  normalizeVillagerData,
-  getCompatibleVillagerData,
-} from "./utils/dataAdapter";
+// import {
+//   getCompatibleVillagerData,
+// } from "./utils/dataAdapter";
 import {
   loadVillagerData,
   getDataSourceInfo,
@@ -34,14 +33,14 @@ import {
   measurePerformance,
   isLowEndDevice as checkIsLowEndDevice,
 } from "./utils/performanceUtils";
-import sampleVillagersNewFormat from "./data/sampleVillagers";
+// import sampleVillagersNewFormat from "./data/sampleVillagers";
 
 // Convert new format sample data to compatible format for existing components
-const getCompatibleSampleData = () => {
-  return sampleVillagersNewFormat.map((villager) =>
-    getCompatibleVillagerData(villager)
-  );
-};
+// const getCompatibleSampleData = () => {
+//   return sampleVillagersNewFormat.map((villager) =>
+//     getCompatibleVillagerData(villager)
+//   );
+// };
 
 function App() {
   const [showNav, setShowNav] = useState(false);
@@ -62,6 +61,76 @@ function App() {
 
   // Enable keyboard navigation
   useKeyboardNavigation(true);
+
+  // Add keyboard event handling for navigation
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && showNav) {
+        closeNav();
+      }
+    };
+
+    if (showNav) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showNav]);
+
+  // Ensure navigation is closed on component mount (cleanup any stuck state)
+  useEffect(() => {
+    closeNav();
+
+    // Force cleanup any stuck CSS classes or transforms that might be left over
+    const cleanupStuckStates = () => {
+      try {
+        console.log("🧹 Starting cleanup of stuck states...");
+
+        // Remove any old nav classes from all elements
+        document.querySelectorAll(".show-nav").forEach((el) => {
+          el.classList.remove("show-nav");
+        });
+
+        // Reset transforms on body and html
+        document.body.style.transform = "";
+        document.documentElement.style.transform = "";
+
+        // CRITICAL: Reset body overflow that might be stuck from modal
+        document.body.style.overflow = "";
+        document.body.style.overflowX = "";
+        document.body.style.overflowY = "";
+
+        // Reset any stuck container transforms
+        document.querySelectorAll(".container").forEach((el) => {
+          el.style.transform = "";
+          el.classList.remove("show-nav");
+        });
+
+        // Reset app container
+        document.querySelectorAll(".app-container").forEach((el) => {
+          el.style.transform = "";
+        });
+
+        // Clean up any orphaned modal elements or screen reader announcements
+        document.querySelectorAll('[aria-live="polite"]').forEach((el) => {
+          if (
+            el.className === "sr-only" &&
+            el.textContent.includes("Modal opened:")
+          ) {
+            el.remove();
+          }
+        });
+
+        console.log("✅ Successfully cleaned up all stuck states");
+      } catch (error) {
+        console.error("❌ Error during cleanup:", error);
+      }
+    };
+
+    cleanupStuckStates();
+  }, []);
 
   // Proper scroll handling with React
   useEffect(() => {
@@ -184,14 +253,30 @@ function App() {
     setShowNav((current) => !current);
   };
 
+  const closeNav = () => {
+    setShowNav(false);
+  };
+
+  // Close navigation when modal opens to prevent conflicts
   const openVillagerModal = useCallback((villager) => {
     setSelectedVillager(villager);
     setIsModalOpen(true);
+    closeNav(); // Close navigation to prevent UI conflicts
   }, []);
 
   const closeVillagerModal = useCallback(() => {
+    console.log("🔄 Closing villager modal...");
+
     setIsModalOpen(false);
     setSelectedVillager(null);
+
+    // Safety: Force reset body overflow to prevent blank pages
+    setTimeout(() => {
+      document.body.style.overflow = "";
+      document.body.style.overflowX = "";
+      document.body.style.overflowY = "";
+      console.log("✅ Modal closed and body overflow reset");
+    }, 100);
   }, []);
 
   // Memoized search change handler to prevent unnecessary re-renders
@@ -297,17 +382,23 @@ function App() {
             className={`nav-container ${
               showNav ? "nav-container--active" : ""
             }`}
+            onClick={(e) => {
+              // Close navigation when clicking the backdrop (but not nav content)
+              if (e.target === e.currentTarget) {
+                closeNav();
+              }
+            }}
           >
             <nav role="navigation" aria-label="Main navigation">
               <ul className="nav-list">
                 <li className="nav-item">
-                  <a href="#home" className="nav-link">
+                  <a href="#home" className="nav-link" onClick={closeNav}>
                     <i className="fas fa-home nav-icon" aria-hidden="true"></i>
                     <span>Home</span>
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a href="#about" className="nav-link">
+                  <a href="#about" className="nav-link" onClick={closeNav}>
                     <i
                       className="fas fa-user-alt nav-icon"
                       aria-hidden="true"
@@ -316,7 +407,7 @@ function App() {
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a href="#contact" className="nav-link">
+                  <a href="#contact" className="nav-link" onClick={closeNav}>
                     <i
                       className="fas fa-envelope nav-icon"
                       aria-hidden="true"

@@ -20,23 +20,24 @@
   max-width: 800px;
   max-height: 90vh;
   overflow-y: auto;
-  background: var(--bg-color, #ffffff);
-  border: 2px solid var(--border-color, #e0e0e0);
+  background: var(--bg-color);
+  border: 2px solid var(--border-color);
   border-radius: 16px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 50px var(--shadow-hover);
   display: flex;
   flex-direction: column;
   position: relative;
-  /* Ensure solid background */
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
 .enhanced-modal-header {
   position: relative;
   padding: 1.5rem;
   border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
   color: white;
   border-radius: 16px 16px 0 0;
 }
@@ -65,7 +66,7 @@
   grid-template-columns: 1fr 2fr;
   gap: 2rem;
   flex-grow: 1;
-  background: var(--bg-color, #ffffff);
+  background: var(--bg-color);
   position: relative;
   z-index: 1;
 }
@@ -96,12 +97,10 @@
 }
 
 .enhanced-basic-info {
-  background: var(--card-bg, #f8f9fa);
+  background: var(--card-bg);
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color, #e0e0e0);
-  opacity: 1;
-  backdrop-filter: none;
+  border: 1px solid var(--border-color);
 }
 
 .info-row {
@@ -147,12 +146,10 @@
 
 /* Gift Preferences Styling */
 .enhanced-gift-section {
-  background: var(--card-bg, #f8f9fa);
+  background: var(--card-bg);
   padding: 1.25rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color, #e0e0e0);
-  opacity: 1;
-  backdrop-filter: none;
+  border: 1px solid var(--border-color);
 }
 
 .gift-category {
@@ -207,12 +204,10 @@
 
 /* Game Appearances */
 .enhanced-appearances-section {
-  background: var(--card-bg, #f8f9fa);
+  background: var(--card-bg);
   padding: 1.25rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color, #e0e0e0);
-  opacity: 1;
-  backdrop-filter: none;
+  border: 1px solid var(--border-color);
 }
 
 .appearances-list {
@@ -238,12 +233,10 @@
 
 /* Music Section */
 .enhanced-music-section {
-  background: var(--card-bg, #f8f9fa);
+  background: var(--card-bg);
   padding: 1.25rem;
   border-radius: 8px;
-  border: 1px solid var(--border-color, #e0e0e0);
-  opacity: 1;
-  backdrop-filter: none;
+  border: 1px solid var(--border-color);
 }
 
 .house-song {
@@ -286,11 +279,9 @@
 /* Modal Footer */
 .enhanced-modal-footer {
   padding: 1.5rem;
-  border-top: 1px solid var(--border-color, #e0e0e0);
-  background: var(--card-bg, #f8f9fa);
+  border-top: 1px solid var(--border-color);
+  background: var(--card-bg);
   border-radius: 0 0 16px 16px;
-  opacity: 1;
-  backdrop-filter: none;
 }
 
 .enhanced-collection-actions {

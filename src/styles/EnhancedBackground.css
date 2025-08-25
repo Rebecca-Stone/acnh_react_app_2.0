@@ -7,11 +7,15 @@
   --gradient-secondary-light: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --gradient-accent-light: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   --gradient-success-light: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  
+
   /* Animated background patterns */
-  --pattern-dots: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0);
-  --pattern-grid: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), 
-                  linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  --pattern-dots: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.15) 1px,
+    transparent 0
+  );
+  --pattern-grid: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
 }
 
 [data-theme="dark"] {
@@ -19,44 +23,48 @@
   --gradient-secondary-dark: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
   --gradient-accent-dark: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   --gradient-success-dark: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  
-  --pattern-dots: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
-  --pattern-grid: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), 
-                  linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+
+  --pattern-dots: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.1) 1px,
+    transparent 0
+  );
+  --pattern-grid: linear-gradient(
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
 
-/* Enhanced body background with animated gradient */
+/* Enhanced body background with beautiful gradients */
 body {
   background: var(--nav-bg);
-  background-image: 
-    var(--gradient-primary-light),
-    var(--pattern-dots);
+  background-image: var(--gradient-primary-light), var(--pattern-dots);
   background-size: 100% 100%, 20px 20px;
   background-attachment: fixed;
-  animation: gradientShift 15s ease-in-out infinite;
+  animation: gentleGradientShift 20s ease-in-out infinite;
   position: relative;
   overflow-x: hidden;
 }
 
 [data-theme="dark"] body {
-  background-image: 
-    var(--gradient-primary-dark),
-    var(--pattern-dots);
+  background-image: var(--gradient-primary-dark), var(--pattern-dots);
   background-size: 100% 100%, 25px 25px;
 }
 
-@keyframes gradientShift {
-  0%, 100% {
+@keyframes gentleGradientShift {
+  0%,
+  100% {
     filter: hue-rotate(0deg) brightness(1);
   }
   25% {
-    filter: hue-rotate(10deg) brightness(1.1);
+    filter: hue-rotate(5deg) brightness(1.05);
   }
   50% {
-    filter: hue-rotate(-5deg) brightness(0.95);
+    filter: hue-rotate(-3deg) brightness(0.98);
   }
   75% {
-    filter: hue-rotate(15deg) brightness(1.05);
+    filter: hue-rotate(8deg) brightness(1.02);
   }
 }
 
@@ -65,16 +73,46 @@ body {
   position: relative;
   min-height: 100vh;
   background: transparent;
+  /* Force reset any stuck transforms */
+  transform: none !important;
+  transition: transform 0.3s ease;
+}
+
+/* Safety reset to ensure main content returns to normal state */
+.main-content {
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Default state - no transform */
+  transform: none;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Only apply nav-open transform when explicitly set */
+.main-content.main-content--nav-open {
+  transform: scale(0.85) translateX(10%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile nav transform */
+@media (max-width: 768px) {
+  .main-content.main-content--nav-open {
+    transform: scale(0.9) translateX(5%);
+  }
 }
 
 /* Beautiful header section */
 .app-header-section {
   position: relative;
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.95) 0%, 
-    rgba(248, 249, 250, 0.9) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(248, 249, 250, 0.9) 100%
+  );
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
@@ -83,37 +121,46 @@ body {
 }
 
 [data-theme="dark"] .app-header-section {
-  background: linear-gradient(135deg, 
-    rgba(45, 45, 45, 0.95) 0%, 
-    rgba(26, 26, 26, 0.9) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(45, 45, 45, 0.95) 0%,
+    rgba(26, 26, 26, 0.9) 100%
+  );
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Animated background shapes */
+/* Animated background shapes with gentle movement */
 .app-header-section::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
-  animation: floatingShapes 20s ease-in-out infinite;
+  top: -25%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(
+      circle at 20% 80%,
+      rgba(120, 119, 198, 0.2) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 119, 198, 0.2) 0%,
+      transparent 50%
+    );
+  animation: gentleFloat 15s ease-in-out infinite;
   z-index: -1;
 }
 
-@keyframes floatingShapes {
-  0%, 100% {
+@keyframes gentleFloat {
+  0%,
+  100% {
     transform: rotate(0deg) scale(1);
+    opacity: 0.7;
   }
-  33% {
-    transform: rotate(120deg) scale(1.1);
-  }
-  66% {
-    transform: rotate(240deg) scale(0.9);
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    opacity: 1;
   }
 }
 
@@ -183,9 +230,11 @@ body {
 
 /* Enhanced main content area */
 .main-content {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.9) 0%, 
-    rgba(248, 249, 250, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(248, 249, 250, 0.8) 100%
+  );
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 2rem;
@@ -197,37 +246,47 @@ body {
 }
 
 [data-theme="dark"] .main-content {
-  background: linear-gradient(135deg, 
-    rgba(45, 45, 45, 0.9) 0%, 
-    rgba(26, 26, 26, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(45, 45, 45, 0.9) 0%,
+    rgba(26, 26, 26, 0.8) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.3);
 }
 
-/* Floating elements animation */
+/* Beautiful floating elements with gentle animation */
 .main-content::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(79, 172, 254, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 90% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%);
-  animation: floatingElements 25s ease-in-out infinite;
+  background: radial-gradient(
+      circle at 10% 20%,
+      rgba(79, 172, 254, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(120, 119, 198, 0.1) 0%,
+      transparent 50%
+    );
+  animation: gentleFloatingElements 20s ease-in-out infinite;
   z-index: -1;
   pointer-events: none;
 }
 
-@keyframes floatingElements {
-  0%, 100% {
+@keyframes gentleFloatingElements {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translateY(0px) rotate(0deg);
   }
   50% {
     opacity: 1;
-    transform: translateY(-20px) rotate(180deg);
+    transform: translateY(-10px) rotate(90deg);
   }
 }
 
@@ -254,7 +313,7 @@ body {
 /* Subtle pattern overlay */
 .search-container::before,
 .filter-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -267,11 +326,13 @@ body {
   z-index: 0;
 }
 
-/* Enhanced collection stats */
+/* Enhanced collection stats with sparkle effects */
 .collection-stats {
-  background: linear-gradient(135deg, 
-    rgba(102, 126, 234, 0.9) 0%, 
-    rgba(118, 75, 162, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.9) 0%,
+    rgba(118, 75, 162, 0.8) 100%
+  );
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -280,32 +341,53 @@ body {
   overflow: hidden;
 }
 
-/* Animated particles background */
+/* Beautiful sparkle effect */
 .collection-stats::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
-    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.3), transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.2), transparent);
+  background-image: radial-gradient(
+      2px 2px at 20px 30px,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 40px 70px,
+      rgba(255, 255, 255, 0.15),
+      transparent
+    ),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(
+      1px 1px at 130px 80px,
+      rgba(255, 255, 255, 0.15),
+      transparent
+    ),
+    radial-gradient(
+      2px 2px at 160px 30px,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
   background-repeat: repeat;
-  background-size: 150px 100px;
-  animation: sparkle 8s linear infinite;
+  background-size: 200px 120px;
+  animation: gentleSparkle 12s linear infinite;
   z-index: 0;
   pointer-events: none;
 }
 
-@keyframes sparkle {
+@keyframes gentleSparkle {
   0% {
     transform: translateX(0);
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
   }
   100% {
-    transform: translateX(150px);
+    transform: translateX(200px);
+    opacity: 0.7;
   }
 }
 
@@ -315,17 +397,17 @@ body {
     border-radius: 0 0 1rem 1rem;
     margin-bottom: 1rem;
   }
-  
+
   .header-controls {
     padding: 1rem;
     gap: 0.5rem;
   }
-  
+
   .theme-toggle {
     top: 1rem;
     right: 1rem;
   }
-  
+
   .main-content {
     border-radius: 1rem;
     margin: 1rem 0;
@@ -337,49 +419,67 @@ body {
     top: 0.75rem;
     right: 0.75rem;
   }
-  
+
   .header-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .modal-toggle-section {
     width: 100%;
   }
 }
 
-/* Reduced motion preferences */
+/* Reduced motion preferences - respect user accessibility needs */
 @media (prefers-reduced-motion: reduce) {
   body,
   .app-header-section::before,
   .main-content::before,
   .collection-stats::before {
-    animation: none;
+    animation: none !important;
   }
-  
+
   .theme-toggle:hover,
   .modal-toggle-section:hover {
-    transform: none;
+    transform: none !important;
+  }
+
+  /* Keep gentle transitions for better UX but remove complex animations */
+  * {
+    animation-duration: 0.1s !important;
+    transition-duration: 0.1s !important;
   }
 }
 
-/* High contrast mode support */
+/* High contrast mode support - ensure accessibility */
 @media (prefers-contrast: high) {
   .app-header-section,
   .main-content,
   .modal-toggle-section,
   .search-container,
-  .filter-container {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border-width: 2px;
+  .filter-container,
+  .collection-stats {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-width: 3px !important;
+    border-color: var(--text-primary) !important;
   }
-  
+
   .app-header-section {
-    background: var(--bg-secondary);
+    background: var(--bg-secondary) !important;
   }
-  
+
   .main-content {
-    background: var(--bg-primary);
+    background: var(--bg-primary) !important;
+  }
+
+  .collection-stats {
+    background: var(--primary-color) !important;
+  }
+
+  /* Enhanced focus indicators for high contrast */
+  *:focus {
+    outline: 4px solid var(--focus-color) !important;
+    outline-offset: 4px !important;
   }
 }
