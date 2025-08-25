@@ -67,7 +67,7 @@ const CollectionStats = React.memo(function CollectionStats({ totalVillagers, an
     } else if (stats.haveCount < 10) {
       return "You're building an impressive collection!";
     } else if (stats.haveCount >= 50) {
-      return "🎉 Master Collector! You have an amazing island community!";
+      return "🎉 Master Collector! You have an amazing collection!";
     } else {
       return "Wow! You're a serious collector! 🏆";
     }
@@ -171,10 +171,7 @@ const CollectionStats = React.memo(function CollectionStats({ totalVillagers, an
             Start by clicking the ❤️ (Have) or ⭐ (Want) buttons on villager
             cards!
           </p>
-          <p>
-            Your collection stats will appear here as you build your island
-            community.
-          </p>
+          <p>Your collection stats will appear here as you build collection.</p>
         </div>
       )}
     </div>

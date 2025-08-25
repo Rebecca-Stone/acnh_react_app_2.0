@@ -115,7 +115,7 @@ body {
   -webkit-backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   border-radius: 0 0 2rem 2rem;
   overflow: hidden;
 }
@@ -164,16 +164,10 @@ body {
   }
 }
 
-/* Controls container in header */
-.header-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 2rem;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  z-index: 2;
+/* Header spacer for visual structure */
+.header-spacer {
+  padding: 4rem 2rem;
+  min-height: 2rem;
 }
 
 /* Enhanced theme toggle positioning */
@@ -200,32 +194,6 @@ body {
 .theme-toggle:hover {
   transform: scale(1.1) rotate(10deg);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-}
-
-/* Enhanced modal toggles */
-.modal-toggle-section {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .modal-toggle-section {
-  background: rgba(45, 45, 45, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.modal-toggle-section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
-[data-theme="dark"] .modal-toggle-section:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Enhanced main content area */
@@ -395,12 +363,12 @@ body {
 @media (max-width: 768px) {
   .app-header-section {
     border-radius: 0 0 1rem 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 
-  .header-controls {
-    padding: 1rem;
-    gap: 0.5rem;
+  .header-spacer {
+    padding: 2rem 1rem;
+    min-height: 1.5rem;
   }
 
   .theme-toggle {
@@ -420,13 +388,9 @@ body {
     right: 0.75rem;
   }
 
-  .header-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .modal-toggle-section {
-    width: 100%;
+  .header-spacer {
+    padding: 1.5rem 0.75rem;
+    min-height: 1rem;
   }
 }
 
@@ -439,8 +403,7 @@ body {
     animation: none !important;
   }
 
-  .theme-toggle:hover,
-  .modal-toggle-section:hover {
+  .theme-toggle:hover {
     transform: none !important;
   }
 
@@ -455,7 +418,6 @@ body {
 @media (prefers-contrast: high) {
   .app-header-section,
   .main-content,
-  .modal-toggle-section,
   .search-container,
   .filter-container,
   .collection-stats {

@@ -1,8 +1,7 @@
 import "./App.css";
 import "./styles/utilities.css";
 import "./styles/EnhancedModal.css";
-import "./styles/ModalToggle.css";
-import "./styles/SchemaValidator.css";
+
 import "./styles/HamburgerMenu.css";
 import "./styles/EnhancedBackground.css";
 import "./styles/EnhancedSearch.css";
@@ -12,11 +11,9 @@ import { useState, useEffect, useCallback } from "react";
 import AnimalList from "./animalComponents/AnimalList";
 import UnifiedSearch from "./components/UnifiedSearch";
 import Filter from "./helpers/Filter";
-import VillagerModal from "./components/VillagerModal";
 import EnhancedVillagerModal from "./components/EnhancedVillagerModal";
 import CollectionStats from "./components/CollectionStats";
 import ThemeToggle from "./components/ThemeToggle";
-import SchemaValidator from "./components/SchemaValidator";
 import HamburgerMenu from "./components/HamburgerMenu";
 import { CollectionProvider } from "./contexts/CollectionContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -51,9 +48,7 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedVillager, setSelectedVillager] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [useEnhancedModal, setUseEnhancedModal] = useState(true); // Toggle between modal types
-  const [showValidator, setShowValidator] = useState(false); // Toggle schema validator
-  const [useEnhancedSearch, setUseEnhancedSearch] = useState(true); // Toggle between search types
+
   const [dataFormat, setDataFormat] = useState("mixed"); // Track data format: 'old', 'new', or 'mixed'
   const [dataSource, setDataSource] = useState("unknown"); // Track data source: 'real', 'api', 'sample'
   const [dataStats, setDataStats] = useState({}); // Statistics about loaded data
@@ -321,54 +316,9 @@ function App() {
             Skip to main content
           </a>
 
-          {/* Enhanced App Header Section */}
+          {/* Enhanced App Header Section - provides spacing and visual structure */}
           <div className="app-header-section">
-            <div className="header-controls">
-              {/* Modal Type Toggle */}
-              <div className="modal-toggle-section">
-                <label className="modal-toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={useEnhancedModal}
-                    onChange={(e) => setUseEnhancedModal(e.target.checked)}
-                    className="modal-toggle-checkbox"
-                  />
-                  <span className="modal-toggle-text">
-                    {useEnhancedModal ? "🎨 Enhanced" : "📝 Basic"} Modal
-                  </span>
-                </label>
-              </div>
-
-              {/* Schema Validator Toggle */}
-              <div className="modal-toggle-section">
-                <label className="modal-toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={showValidator}
-                    onChange={(e) => setShowValidator(e.target.checked)}
-                    className="modal-toggle-checkbox"
-                  />
-                  <span className="modal-toggle-text">
-                    {showValidator ? "🔍 Hide" : "🔍 Show"} Schema Validator
-                  </span>
-                </label>
-              </div>
-
-              {/* Search Type Toggle */}
-              <div className="modal-toggle-section">
-                <label className="modal-toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={useEnhancedSearch}
-                    onChange={(e) => setUseEnhancedSearch(e.target.checked)}
-                    className="modal-toggle-checkbox"
-                  />
-                  <span className="modal-toggle-text">
-                    {useEnhancedSearch ? "✨ Enhanced" : "📝 Basic"} Search
-                  </span>
-                </label>
-              </div>
-            </div>
+            <div className="header-spacer"></div>
           </div>
 
           {/* Enhanced Theme Toggle - Fixed Position */}
@@ -501,13 +451,7 @@ function App() {
             <UnifiedSearch
               onSearchChange={handleSearchChange}
               animalList={animalList}
-              variant={
-                useEnhancedSearch
-                  ? isLowEndDevice
-                    ? "optimized"
-                    : "enhanced"
-                  : "basic"
-              }
+              variant={isLowEndDevice ? "optimized" : "enhanced"}
               isLowEndDevice={isLowEndDevice}
             />
 
@@ -522,20 +466,9 @@ function App() {
               animalList={animalList}
             />
 
-            {/* Schema Validator */}
-            {showValidator && (
-              <SchemaValidator
-                onValidatedData={(validatedData) => {
-                  console.log("Validated data received:", validatedData);
-                  // Could implement functionality to load validated data into the app
-                }}
-              />
-            )}
-
             {/* Debug info for data format */}
             <div className="sr-only" aria-live="polite">
-              Data loaded in {dataFormat} format with{" "}
-              {useEnhancedModal ? "enhanced" : "basic"} modal
+              Data loaded in {dataFormat} format with enhanced modal
             </div>
 
             <main aria-label="Villager gallery">
@@ -552,19 +485,11 @@ function App() {
           </div>
 
           {/* Villager Detail Modal */}
-          {useEnhancedModal ? (
-            <EnhancedVillagerModal
-              villager={selectedVillager}
-              isOpen={isModalOpen}
-              onClose={closeVillagerModal}
-            />
-          ) : (
-            <VillagerModal
-              villager={selectedVillager}
-              isOpen={isModalOpen}
-              onClose={closeVillagerModal}
-            />
-          )}
+          <EnhancedVillagerModal
+            villager={selectedVillager}
+            isOpen={isModalOpen}
+            onClose={closeVillagerModal}
+          />
         </div>
       </CollectionProvider>
     </ThemeProvider>
