@@ -130,6 +130,11 @@ function App() {
   // Proper scroll handling with React
   useEffect(() => {
     const checkBoxes = () => {
+      // Skip animation checks when modal is open to prevent layout shifts
+      if (isModalOpen) {
+        return;
+      }
+      
       const triggerBottom = (window.innerHeight / 5) * 4;
       const boxes = document.querySelectorAll(".box");
 
@@ -160,7 +165,7 @@ function App() {
     return () => {
       window.removeEventListener("scroll", checkBoxes);
     };
-  }, []);
+  }, [isModalOpen]);
 
   // Additional effect to check boxes when animal data loads
   useEffect(() => {
@@ -181,6 +186,17 @@ function App() {
       setTimeout(checkBoxes, 50);
     }
   }, [animalList]);
+
+  // Force all cards to show when modal opens to prevent layout shifts
+  useEffect(() => {
+    if (isModalOpen) {
+      // When modal opens, ensure all cards are in their "show" state
+      const boxes = document.querySelectorAll(".box");
+      boxes.forEach((box) => {
+        box.classList.add("show");
+      });
+    }
+  }, [isModalOpen]);
 
   useEffect(() => {
     const getAnimals = async () => {
