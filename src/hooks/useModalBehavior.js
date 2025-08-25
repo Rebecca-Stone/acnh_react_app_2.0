@@ -49,7 +49,12 @@ export const useModalBehavior = (isOpen, onClose, villager) => {
         previousActiveElement.current &&
         document.body.contains(previousActiveElement.current)
       ) {
-        previousActiveElement.current.focus();
+        try {
+          previousActiveElement.current.focus();
+        } catch (error) {
+          // Fallback: focus body if element focus fails
+          document.body.focus();
+        }
       }
       // Restore body scroll when modal closes
       document.body.style.overflow = "unset";
@@ -57,10 +62,8 @@ export const useModalBehavior = (isOpen, onClose, villager) => {
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      // Only restore scroll if we're unmounting, not just changing state
-      if (!isOpen) {
-        document.body.style.overflow = "unset";
-      }
+      // Always restore scroll on cleanup to prevent stuck state
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose, villager]);
 

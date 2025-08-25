@@ -260,18 +260,8 @@ function App() {
   }, []);
 
   const closeVillagerModal = useCallback(() => {
-    console.log("🔄 Closing villager modal...");
-
     setIsModalOpen(false);
     setSelectedVillager(null);
-
-    // Safety: Force reset body overflow to prevent blank pages
-    setTimeout(() => {
-      document.body.style.overflow = "";
-      document.body.style.overflowX = "";
-      document.body.style.overflowY = "";
-      console.log("✅ Modal closed and body overflow reset");
-    }, 100);
   }, []);
 
   // Memoized search change handler to prevent unnecessary re-renders
